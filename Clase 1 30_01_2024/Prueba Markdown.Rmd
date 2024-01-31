@@ -1,0 +1,149 @@
+---
+title: "Untitled"
+output:
+  html_document: default
+  pdf_document: default
+date: "2024-01-31"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Escribir texto
+
+```{r}
+x <- 5
+x
+```
+
+$$
+\frac{x}{n}
+$$
+# Including Plots
+## Including Plots
+### Including Plots
+#### Including Plots
+##### Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+# R
+
+```{r}
+x <- 5
+x
+```
+
+Datos atómicos
+
+```{r}
+5
+"asdas"
+TRUE
+5.7
+```
+
+Estructuras de datos
+
+```{r}
+c(3, 4, 5, 6, 7)
+```
+
+Promoción y casteo
+
+```{r}
+v <- c("1", 3, 4)
+```
+
+```{r}
+l <- list(3, 4, 5, "asa", list(2, 3, 5))
+```
+
+```{r}
+matrix(c(v, v, v), nrow = 3)
+```
+```{r}
+data.frame(l)
+```
+```{r}
+factor(v)
+```
+
+```{r}
+factor(v, ordered = TRUE)
+```
+
+ciclos: 
+
++ For
++ While
++ Do-while
+
+```{r}
+for(i in seq(1, 10, 2)){
+  print(i)
+}
+```
+```{r}
+flag <- TRUE
+i <- 0
+while(flag){
+  print(i)
+  i = i + 1
+  print("Ya sumé")
+  if(i == 11){
+    print("Entro el if")
+    flag <- FALSE
+  }
+}
+```
+```{r}
+integer(34)
+```
+
+```{r}
+as.integer(v)
+```
+
+```{r}
+?rnorm()
+```
+
+Establecemos una semilla
+
+```{r}
+x1 <- rnorm(42)
+x2 <- rnorm(42) + rnorm(42)
+```
+
+```{r}
+plot(x1, x2)
+```
+
+
+```{r}
+library(tidyverse)
+
+tibble(x1,x2) %>% 
+  ggplot(aes(x = x1, y = x2)) + 
+  geom_point() + 
+  theme_minimal() + 
+  ggtitle("X vs Y") + theme(axis.text.x = element_text(angle = 45),
+    panel.background = element_rect(linetype = "dashed"),
+    plot.background = element_rect(fill = "antiquewhite"))
+```
+
+En el código anterior hicimos uso del addin ggplot Theme Assistant. Pueden encontrar información [aquí](https://github.com/calligross/ggthemeassist) y para su instalación pueden ejecutar el siguiente código
+
+```{r eval=FALSE, include=TRUE}
+install.packages("ggThemeAssist")
+```
+
