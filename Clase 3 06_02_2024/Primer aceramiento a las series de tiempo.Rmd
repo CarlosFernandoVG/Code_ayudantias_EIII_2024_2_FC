@@ -1,0 +1,70 @@
+---
+title: "Prueba"
+output: pdf_document
+date: "2024-01-30"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Fuente de datos de la clase:
+
+https://www.kaggle.com/datasets/ruchi798/analyzing-screen-time?select=Screentime+-+App+Ranking.csv
+
+```{r}
+library(tidyverse)
+screen <- read_csv("Screentime - App Details.csv")
+```
+```{r}
+screen_inst <- screen %>% filter(App == "Instagram")
+screen_whats <- screen %>% filter(App != "Instagram")
+```
+
+```{r}
+fts_inst <- ts(screen_inst$`Times opened`, 
+               start = as.Date(min(screen_inst$Date), 
+                               format = "%m/%d/%Y"), 
+               frequency = 365)
+fts_whats <- ts(screen_whats$`Times opened`)
+```
+
+```{r}
+as.Date(min(screen_inst$Date), format = "%m/%d/%Y")
+```
+
+
+```{r}
+fts_inst
+```
+
+
+```{r}
+library(forecast)
+```
+
+```{r}
+library(patchwork)
+
+autoplot(fts_inst) + autoplot(fts_whats)
+```
+
+```{r}
+stl(fts_inst)
+```
+
+```{r}
+autoplot(decompose(AirPassengers, type = "additive"))
+```
+
+```{r}
+autoplot(decompose(AirPassengers, type = "multiplicative"))
+```
+
+```{r}
+install.packages("highcharter")
+library(highcharter)
+```
+
+
+
