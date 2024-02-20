@@ -1,0 +1,59 @@
+---
+title: "Untitled"
+output: html_document
+date: "2024-02-10"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+lubridate::yday(fecha_ini)
+```
+
+```{r}
+library(tidyverse)
+screen <- read_csv("Screentime - App Details.csv")
+screen_inst <- screen %>% filter(App == "Instagram")
+screen_whats <- screen %>% filter(App != "Instagram")
+fecha_ini <- as.Date(min(screen_inst$Date), 
+                               format = "%m/%d/%Y")
+time_serie_inst <- ts(screen_inst$`Times opened`, 
+               start = c(lubridate::year(fecha_ini), lubridate::yday(fecha_ini)), frequency = 365)
+time_serie_what <- ts(screen_whats$`Times opened`, 
+               start = c(lubridate::year(fecha_ini), lubridate::yday(fecha_ini)), frequency = 365)
+```
+
+```{r}
+library(forecast)
+autoplot(time_serie_inst, color = "pink") + 
+  forecast::autolayer(time_serie_what, color = "green") + 
+  theme_minimal()
+```
+
+```{r}
+acf(time_serie_inst, plot = FALSE)
+```
+
+```{r}
+pacf(time_serie_inst, plot = FALSE)
+```
+```{r}
+library(patchwork)
+ggAcf(time_serie_inst) + ggPacf(time_serie_inst)
+```
+```{r}
+library(bbplot)
+ggAcf(time_serie_inst) + theme(panel.grid.major = element_line(linetype = "dashed"),
+    panel.grid.minor = element_line(linetype = "longdash"),
+    panel.background = element_rect(linetype = "dashed"))
+
+```
+
+```{r}
+(ggAcf(time_serie_inst) + bbc_style()) + (ggPacf(time_serie_inst) + bbc_style())
+```
+
+
+
