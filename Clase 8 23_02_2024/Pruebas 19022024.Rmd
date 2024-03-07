@@ -1,0 +1,223 @@
+---
+title: "Untitled"
+output: html_document
+date: "2024-02-09"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(patchwork)
+```
+
+```{r}
+plot_series_corr_plot <- function(serie, sample_max_time = NULL){
+  if (is.null(sample_max_time)){
+    plot_ts <- tibble(x = seq_along(serie), y = serie) %>% 
+      ggplot(aes(x = x, y = y)) + geom_line() + 
+      theme_minimal() + ggtitle("Serie")
+  }else{
+    plot_ts <- tibble(x = seq(1, sample_max_time), 
+                      y = serie[1:sample_max_time]) %>% 
+      ggplot(aes(x = x, y = y)) + geom_line() + 
+      theme_minimal() + ggtitle("Serie")
+  }
+  plot_Acf <- ggAcf(serie, lag.max = 100) + theme_minimal() + ggtitle("ACF")
+  plot_Pacf <- ggPacf(serie, lag.max = 100) + theme_minimal() + ggtitle("PACF")
+  plot_ts + plot_Acf + plot_Pacf
+}
+```
+
+```{r}
+set.seed(10)
+#Diferentes coeficientes para los modelos AR
+ARcoefficients <- c(0.7, 0.2, -0.1)
+#Vamos a simular y guardar todo en una lista
+AR_models <- list()
+for(p in 1:3){
+  AR_models[[p]] <- stats::arima.sim(n = 10000, list(ar = ARcoefficients[1:p]))
+}
+
+#Utilizamos una función creada para este material
+(AR_models[[1]] %>% plot_series_corr_plot(sample_max_time = 100)) / 
+  (AR_models[[2]] %>% plot_series_corr_plot(sample_max_time = 100)) / 
+  (AR_models[[3]] %>% plot_series_corr_plot(sample_max_time = 100))
+```
+
+```{r}
+set.seed(11)
+#Diferentes coeficientes para los modelos AR
+AMcoefficients <- c(0.7, 0.2, -0.1)
+#Vamos a simular y guardar todo en una lista
+AM_models <- list()
+for(p in 1:3){
+  AM_models[[p]] <- stats::arima.sim(n = 10000, list(ma = AMcoefficients[1:p]))
+}
+(AM_models[[1]] %>% plot_series_corr_plot(sample_max_time = 100)) / 
+  (AM_models[[2]] %>% plot_series_corr_plot(sample_max_time = 100)) / 
+  (AM_models[[3]] %>% plot_series_corr_plot(sample_max_time = 100))
+```
+
+```{r}
+set.seed(15)
+ARIMAmodel1 <- arima.sim(model = list(ar = .7, ma =.7), n = 100)
+ARIMAmodel2 <- arima.sim(model = list(ar = c(.7, 0.2), ma = c(-0.1, -0.3)), n = 10000)
+(ARIMAmodel1 %>% plot_series_corr_plot(sample_max_time = 100)) / 
+  (ARIMAmodel2 %>% plot_series_corr_plot(sample_max_time = 100)) 
+```
+```{r}
+ARIMAmodel2 %>% plot_series_corr_plot(sample_max_time = 100)
+```
+
+```{r}
+Arima(ARIMAmodel2, order = c(2, 0, 2))
+```
+```{r}
+Arima(ARIMAmodel2, order = c(5, 0, 0))
+```
+
+
+```{r}
+AirPassengers %>% plot_series_corr_plot()
+```
+
+```{r}
+for (coef in c(2, 3, 4, 12)){
+  print(coef)
+  m <- AirPassengers %>% Arima(order = c(coef, 0, 0), method = "ML")
+  print(m$aicc)
+  print(m$bic)
+  print(m$aic)
+}
+```
+
+```{r}
+AirPassengers %>% Arima(order = c(13, 0, 0), method = "ML")
+```
+```{r}
+AirPassengers %>% Arima(order = c(4, 0, 0), method = "ML")
+```
+```{r}
+AirPassengers %>% Arima(order = c(13, 1, 0), method = "ML")
+```
+```{r}
+AirPassengers %>% auto.arima()
+```
+```{r}
+forecast::ndiffs(AirPassengers)
+```
+
+```{r}
+forecast::nsdiffs(AirPassengers)
+```
+
+```{r}
+AirPassengers[1:4] 
+```
+
+```{r}
+AirPassengers[1:4] %>% diff() %>% diff() %>% diff()
+```
+
+```{r}
+(AirPassengers %>% diff(1, lag = 12) %>% autoplot()) + 
+  (AirPassengers %>% diff(12) %>% autoplot())
+```
+
+```{r}
+AirPassengers %>% diff(12) %>% autoplot()
+```
+
+
+```{r}
+AirPassengers %>% diff() %>% plot_series_corr_plot()
+```
+```{r}
+AirPassengers %>% diff(1, lag = 12) %>% diff() %>% auto.arima()
+```
+```{r}
+AirPassengers %>% log() %>% auto.arima()
+```
+```{r}
+AirPassengers %>% log() %>% plot_series_corr_plot()
+```
+
+```{r}
+AirPassengers %>% auto.arima()
+```
+
+```{r}
+AirPassengers %>% log() %>% auto.arima()
+```
+
+```{r}
+AirPassengers %>% BoxCox(BoxCox.lambda(AirPassengers)) %>% auto.arima()
+```
+```{r}
+BoxCox.lambda(AirPassengers)
+```
+```{r}
+
+```
+
+```{r}
+AirPassengers %>% auto.arima()
+```
+
+
+```{r}
+AirPassengers %>% diff() %>% Arima(order = c(12, 0, 0), method = "ML")
+```
+```{r}
+AirPassengers %>% diff(lag = 12, differences = 2) %>% diff() %>%  plot_series_corr_plot()
+```
+```{r}
+pretty_model <- AirPassengers %>% auto.arima()
+```
+
+```{r}
+strange_model <- AirPassengers %>% Arima(order = c(13, 1, 12), seasonal = list(order = c(2, 2, 2),  period = 12), method = "ML")
+```
+
+```{r}
+strange_model
+```
+
+```{r}
+air_std <- AirPassengers %>% auto.arima()
+air_log <- AirPassengers %>% log() %>% auto.arima()
+air_box <- AirPassengers %>% BoxCox(BoxCox.lambda(AirPassengers)) %>% auto.arima()
+
+(air_std %>% forecast(h = 24) %>% autoplot()) + 
+  (air_log %>% forecast(h = 24) %>% autoplot()) + 
+  (air_box %>% forecast(h = 24) %>% autoplot())
+```
+
+```{r}
+air_std %>% forecast(h = 24) %>% autoplot()
+```
+```{r}
+prediction <- air_log %>% forecast(h = 24)
+prediction$x <- exp(prediction$x)
+prediction$mean <- exp(prediction$mean)
+prediction$lower <- exp(prediction$lower)
+prediction$upper <- exp(prediction$upper)
+
+prediction %>% autoplot()
+```
+
+```{r}
+prediction <- air_box %>% forecast(h = 24)
+prediction$x <- InvBoxCox(prediction$x, BoxCox.lambda(AirPassengers))
+prediction$mean <- InvBoxCox(prediction$mean, BoxCox.lambda(AirPassengers))
+prediction$lower <- InvBoxCox(prediction$lower, BoxCox.lambda(AirPassengers))
+prediction$upper <- InvBoxCox(prediction$upper, BoxCox.lambda(AirPassengers))
+
+prediction %>% autoplot()
+```
+```{r}
+air_box %>% forecast(h = 24)
+```
+
+
+
