@@ -1,0 +1,618 @@
+---
+title: "Análisis del precio de vivienda"
+output: 
+  html_document:
+    df_print: paged
+date: "2024-02-12"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      warning = FALSE,
+                      message = FALSE)
+```
+
+```{r}
+library(tidyverse)
+library(plotly)
+library(forecast)
+library(urca)
+```
+
+# Análisis descriptivo
+
+```{r}
+prices <- read_csv("DP_LIVE_01022024174058019.csv")
+#Tanto la variable Flag Codes, INDICATOR y MEASURE son unarias
+prices <- prices %>% select(-c(`Flag Codes`, INDICATOR, MEASURE))
+```
+```{r}
+prices %>% mutate(TIME = as.numeric(TIME)) %>% dplyr::arrange(TIME)
+```
+
+Descripción rápida del contenido:
+
++ Tenemos `r (prices %>% dim())[1]` datos y para cada indicador `r (prices %>% dim())[2]` variables
++ Las variables son las siguientes:
+
+```{r}
+n_indicadores_pais <- prices %>% group_by(LOCATION) %>% summarise(Cantidad_indicadores = n()) %>% arrange(desc(Cantidad_indicadores))
+#median_n_indicadores_pais <- n_indicadores_pais$Cantidad_indicadores %>% median()
+```
+
+  - `LOCATION`: País al que hace referencia el indicador por año. Se tienen datos de `r prices$LOCATION %>% unique() %>% length()` países con un mínimo de `r n_indicadores_pais$Cantidad_indicadores %>% min()` registros y un máximo de `r n_indicadores_pais$Cantidad_indicadores %>% max()` por país.
+  
+  - La variable `SUBJECT` indica el tipo de precio que se maneja en un índice, estos pueden ser:
+    - **precio de alquiler de la vivienda**
+    - **precio nominal de la vivienda** (el valor sin tener en cuenta la inflación o las condiciones del mercado); Este cubre las ventas de viviendas de nueva construcción y usadas siguiendo las recomendaciones del manual de Índices de Precios de Propiedades Residenciales.
+    - **precio real de la vivienda** (toma en cuenta la inflación, por lo que hace comparable los precios a distintas temporalidades). Este es la relación entre el índice de precios nominal de la vivienda y el deflactor del gasto de los consumidores en cada país según la base de datos de cuentas nacionales de la OCDE
+    - **relación precio/alquiler**. Este se calcula con índice de precios nominales de la vivienda dividido por el ingreso nominal disponible per cápita y puede ser considerado como una medida de **rentabilidad**
+    - **relación precio/ingresos**. La relación precio/alquiler es el índice de precios nominal de la vivienda dividido por el índice de precios de alquiler de la vivienda y puede considerarse como una medida de la **asequibilidad** de la propiedad de la vivienda.
+
+Es importante mencionar que las relaciones precio-ingreso y precio-alquiler son índices con año base 2015. Por este motivo, tomaremos la información a partir de este año.
+
+```{r}
+prices %>% group_by(SUBJECT) %>% count()
+```
+
+```{r}
+prices %>% dim()
+```
+
+  - `FREQUENCY` determina el tipo de periodo que se indica en el índice, el cual puede ser trimestral (`Q`) o anual (`A`) 
+  
+```{r}
+codes <- read_csv("Paises por continentes.csv")
+codes <- codes %>% select(Continente, `Código ISO`, `País`) %>% rename(ISO = `Código ISO`)
+#https://docs.wto.org/gtd/Default.aspx?pagename=WTOIsocodes&langue=s#:~:text=Los%20c%C3%B3digos%20de%20pa%C3%ADs%2Fterritorio,futuros%20Miembros%20de%20la%20OMC.
+codes <- codes %>% add_row(tibble(Continente = "África", ISO = "ZAF"))
+prices <- prices %>% left_join(codes, join_by(LOCATION == ISO))
+```
+
+```{r}
+prices %>% filter(FREQUENCY == "A" & TIME >= 2015) %>% mutate(TIME = as.numeric(TIME)) %>%
+  group_by(`País`) %>% 
+  summarise(n = n(), desde = min(TIME), hasta = max(TIME)) %>% arrange(hasta)
+```
+
+```{r}
+prices %>% filter(FREQUENCY == "Q" & TIME >= 2015) %>% 
+  mutate(year = as.integer(str_sub(TIME, end = 4))) %>%
+  group_by(`País`) %>% 
+  summarise(n = n(), desde = min(year), hasta = max(year)) %>% arrange(hasta)
+```
+
+La mayoría de los países tienen los índices de precios anuales hasta el 2023, 9 países tienen hasta 2022 (China, Rusia, Australia y Brasil por ejemplo). En cuanto a los trimestres, para la mayoría de los países se tiene, al menos, hasta el primer cuatrimestre del año.
+
+```{r}
+prices <- prices %>% filter(TIME >= 2015)
+```
+
+No tomaremos en cuenta los índices que agrupan a distintos países como EA17 (Euro area 17 countries), EA (Euro area) y OECD.
+
+```{r}
+prices <- prices %>% filter(!(LOCATION %in% c("EA17", "EA", "OECD")))
+```
+
+```{r}
+prices %>% group_by(LOCATION) %>% count()
+```
+
+
+Considerando los datos desde el 2015, tenemos `r dim(prices)[1]` registros, de los cuales `r (prices %>% filter(FREQUENCY == "A") %>% dim())[1]` corresponden a los índices de precio anuales y `r (prices %>% filter(FREQUENCY == "Q") %>% dim())[1]` a los precios trimestrales.
+
+Las siguientes gráficas consideran solo datos anuales
+
+```{r}
+median_by_countrie_real <- prices %>% filter(FREQUENCY == "A" & SUBJECT == "REAL") %>% mutate(TIME = as.integer(TIME)) %>% group_by(Continente, TIME) %>% summarise(Median_value = median(Value))
+median_by_countrie_PRICERENT <- prices %>% filter(FREQUENCY == "A" & SUBJECT == "PRICERENT") %>% mutate(TIME = as.integer(TIME)) %>% group_by(Continente, TIME) %>% summarise(Median_value = median(Value))
+median_by_countrie_PRICEINCOME <- prices %>% filter(FREQUENCY == "A" & SUBJECT == "PRICEINCOME") %>% mutate(TIME = as.integer(TIME)) %>% group_by(Continente, TIME) %>% summarise(Median_value = median(Value))
+```
+
+```{r}
+library(extrafont)
+#font_import()
+loadfonts(device = "win")
+library(patchwork)
+median_anual_real <- prices %>% filter(FREQUENCY == "A" & SUBJECT == "REAL") %>% 
+  mutate(TIME = as.integer(TIME)) %>% group_by(TIME) %>% 
+  summarise(Precio_mediano = median(Value)) %>% 
+  ggplot(aes(x = TIME, y = Precio_mediano)) + 
+  geom_line() + 
+  theme_minimal() + 
+  ggtitle("Precio mediano real de la vivienda") + 
+  labs(x = "", y = "Valor de índice") + 
+  theme(legend.position = "none", 
+        plot.title = element_text(hjust = 0.5), 
+        text=element_text(size = 8, family="Georgia"))
+
+median_anual_priceIncome <- prices %>% filter(FREQUENCY == "A" & SUBJECT == "PRICEINCOME") %>% 
+  mutate(TIME = as.integer(TIME)) %>% group_by(TIME) %>% 
+  summarise(Precio_mediano = median(Value)) %>% 
+  ggplot(aes(x = TIME, y = Precio_mediano)) + 
+  geom_line() + 
+  theme_minimal() + 
+  ggtitle("Asequibilidad mediana") + 
+  labs(x = "", y = "") + 
+  theme(legend.position = "none", 
+        plot.title = element_text(hjust = 0.5),
+        text=element_text(size = 8, family="Georgia"))
+
+median_anual_princeRent <- prices %>% filter(FREQUENCY == "A" & SUBJECT == "PRICERENT") %>% 
+  mutate(TIME = as.integer(TIME)) %>% group_by(TIME) %>% 
+  summarise(Precio_mediano = median(Value)) %>% 
+  ggplot(aes(x = TIME, y = Precio_mediano)) + 
+  geom_line() + 
+  theme_minimal() + 
+  ggtitle("Rentabilidad mediana") + 
+  labs(x = "", y = "") + 
+  theme(legend.position = "none", 
+        plot.title = element_text(hjust = 0.5),
+        text=element_text(size = 8, family="Georgia"))
+
+median_anual <- (median_anual_real + median_anual_priceIncome + median_anual_princeRent)
+
+ggsave("Median_anual.png", plot = median_anual, width = 7, height = 3)
+```
+
+```{r}
+prices %>% filter(FREQUENCY == "Q" & SUBJECT == "REAL") %>% 
+  mutate(year = as.integer(str_sub(TIME, end = 4)), 
+         trimestre = as.integer(str_sub(TIME, start = 7))) %>% group_by(year, trimestre) %>% summarise(Precio_mediano = median(Value)) %>% 
+  ggplot(aes(x = year, y = Precio_mediano)) + 
+  geom_line() + 
+  theme_minimal() + 
+  ggtitle("Precio mediano real de la vivienda anual") + 
+  labs(x = "", y = "Valor de índice") + 
+  theme(legend.position = "none", 
+        plot.title = element_text(hjust = 0.5))
+```
+
+Con cada año, el precio real de la vivienda ha aumentado, generalmente en países de Oceanía y Europa
+
+```{r}
+ggplotly(median_by_countrie_real %>% 
+  ggplot(aes(x = TIME, y = Median_value, color = Continente)) + 
+  geom_line() + 
+  theme_minimal() + 
+  ggtitle("Precio real de la vivienda") + 
+  labs(x = "Año", y = "Precio") + 
+  theme(plot.title = element_text(hjust = 0.5)))
+```
+
+```{r}
+prices %>% filter(FREQUENCY == "A" & SUBJECT == "REAL") %>% mutate(TIME = as.integer(TIME)) %>% group_by(Continente, TIME) %>% summarise(Median_value = median(Value)) %>% ggplot(aes(x = TIME, y = Median_value, color = Continente)) + 
+  geom_line() + 
+  theme_minimal() + 
+  ggtitle("Precio real de la vivienda") + 
+  labs(x = "Año", y = "Precio") + 
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+
+Aunque el país con mayores aumentos anuales ha sido Hungría seguido por Islandia y Portugal
+
+```{r}
+ggplotly(prices %>% filter(FREQUENCY == "A" & SUBJECT == "REAL") %>% mutate(TIME = as.integer(TIME)) %>% 
+  ggplot(aes(x = TIME, y = Value, color = `País`)) + 
+  geom_line() + 
+  theme_minimal() + 
+  ggtitle("Precio real de la vivienda") + 
+  labs(x = "Año", y = "Precio") + 
+  theme(legend.position = "none", 
+        plot.title = element_text(hjust = 0.5)))
+```
+
+Por otra parte, países del continente americano tienen una mayor diversidad en los precios de la vivienda
+
+```{r}
+ggplotly(prices %>% filter(FREQUENCY == "A" & SUBJECT == "REAL") %>% 
+  ggplot(aes(x = Continente, y = Value, fill = Continente)) + 
+  geom_boxplot() + 
+  theme_minimal() + 
+  labs(x = "", y = "Precio real de la vivienda") + 
+  theme(legend.position = "none"))
+```
+
+Pero, de acuerdo a la capacidad de compra a la que esta sujeto cada zona, comprar una vivienda en alguno de los países del continente americano puede ser más complicado que en otros países, Europa y Asia por ejemplo
+
+```{r}
+ggplotly(prices %>% filter(FREQUENCY == "A" & SUBJECT == "PRICEINCOME") %>% 
+  ggplot(aes(x = Continente, y = Value, fill = Continente)) + 
+  geom_boxplot() + 
+  theme_minimal() + 
+  labs(x = "", y = "Asequibilidad") + 
+  theme(legend.position = "none"))
+```
+
+Aunque existen excepciones. Por ejemplo donde sería más difícil, por todas las condiciones exógenas de vivir en un país, comprar una vivienda por los recursos financieros que se obtienen del ingreso laboral sería en Luxemburgo, seguido de Portugal y Canadá en 2023
+
+```{r}
+ggplotly(prices %>% filter(FREQUENCY == "A" & SUBJECT == "PRICEINCOME") %>% mutate(TIME = as.integer(TIME)) %>% 
+  ggplot(aes(x = TIME, y = Value, color = `País`)) + 
+  geom_line() + 
+  theme_minimal() + 
+  ggtitle("Asequibilidad") + 
+  labs(x = "Año", y = "Precio/Ingresos") + 
+  theme(legend.position = "none", 
+        plot.title = element_text(hjust = 0.5)))
+```
+
+Esto ha sido variable con cada año pero, en general, comprar una casa en un país de Oceanía y América puede ser más complicado que en otros países de otro continente
+
+```{r}
+ggplotly(median_by_countrie_PRICEINCOME %>% 
+  ggplot(aes(x = TIME, y = Median_value, color = Continente)) + 
+  geom_line() + 
+  theme_minimal() + 
+  ggtitle("Asequibilidad") + 
+  labs(x = "Año", y = "Precio/Ingresos") + 
+  theme(legend.position = "none", 
+        plot.title = element_text(hjust = 0.5)))
+```
+
+Respecto a la renta de la vivienda, el panorama es más homogéneo entre los continentes
+
+```{r}
+ggplotly(prices %>% filter(FREQUENCY == "A" & SUBJECT == "PRICERENT") %>% 
+  ggplot(aes(x = Continente, y = Value, fill = Continente)) + 
+  geom_boxplot() + 
+  theme_minimal() + 
+  labs(x = "", y = "Rentabilidad") + 
+  theme(legend.position = "none"))
+```
+
+```{r}
+prices %>% filter(FREQUENCY == "A" & SUBJECT == "PRICERENT") %>% arrange(Continente, Value)
+```
+
+
+Aunque, históricamente, en Oceanía y en América es más complicado rentar una casa para vivir.
+
+```{r}
+ggplotly(median_by_countrie_PRICERENT %>% 
+  ggplot(aes(x = TIME, y = Median_value, color = Continente)) + 
+  geom_line() + 
+  theme_minimal() + 
+  ggtitle("Rentabilidad") + 
+  labs(x = "Año", y = "Precio/Alquiler") + 
+  theme(plot.title = element_text(hjust = 0.5)))
+```
+
+```{r}
+library("ggsci")
+anual_real_continents <- prices %>% filter(FREQUENCY == "A" & SUBJECT == "REAL") %>% 
+  ggplot(aes(x = Continente, y = Value, fill = Continente)) + 
+  geom_boxplot() + 
+  theme_minimal() + 
+  labs(x = "", y = "Valor del Índice") + 
+  ggtitle("Precio real de la vivienda") +
+  scale_fill_jco() + 
+  theme(legend.position = "none", plot.title = element_text(hjust = 0.5),
+        text=element_text(size = 8, family="Georgia"))
+anual_aseq_continents <- prices %>% filter(FREQUENCY == "A" & SUBJECT == "PRICEINCOME") %>% 
+  ggplot(aes(x = Continente, y = Value, fill = Continente)) + 
+  geom_boxplot() + 
+  theme_minimal() + 
+  labs(x = "", y = "") + 
+  ggtitle("Asequibilidad") +
+  scale_fill_jco() + 
+  theme(legend.position = "none", plot.title = element_text(hjust = 0.5),
+        text=element_text(size = 8, family="Georgia"))
+anual_rent_continents <- prices %>% 
+  filter(FREQUENCY == "A" & SUBJECT == "PRICERENT") %>% 
+  filter(Value < 260) %>%  #"Quitamos outliers evidentes"
+  ggplot(aes(x = Continente, y = Value, fill = Continente)) + 
+  geom_boxplot() + 
+  theme_minimal() + 
+  labs(x = "", y = "") + 
+  ggtitle("Rentabilidad") +
+  scale_fill_jco() + 
+  theme(legend.position = "none", plot.title = element_text(hjust = 0.5),
+        text=element_text(size = 8, family="Georgia"))
+
+boxplots_anual <- anual_real_continents + anual_aseq_continents + anual_rent_continents
+
+ggsave("Boxplots_anual.png", plot = boxplots_anual, width = 8, height = 3)
+```
+
+# Modelos
+
+```{r}
+pt <- prices %>% 
+  dplyr::filter(FREQUENCY == "Q" & SUBJECT == "REAL") %>% 
+  mutate(year = as.integer(str_sub(TIME, end = 4)), 
+         trimestre = as.integer(str_sub(TIME, start = 7))) %>% 
+  group_by(Continente, TIME) %>% dplyr::summarise(precio_mediano = mean(Value)) %>% 
+  dplyr::group_by(Continente) %>% nest()
+```
+
+```{r}
+pt$data[[1]]
+```
+
+
+```{r echo=TRUE, include=TRUE, results = 'hide'}
+modelos_anuales_precioReal <- prices %>% 
+  dplyr::filter(FREQUENCY == "A" & SUBJECT == "REAL") %>% 
+  mutate(TIME = as.numeric(TIME)) %>% 
+  group_by(Continente, TIME) %>% dplyr::summarise(precio_mediano = mean(Value)) %>% 
+  dplyr::group_by(Continente) %>% nest() %>% 
+  mutate(ts_objects = map(data, ~ts(.x$precio_mediano))) %>% 
+  mutate(airma_models = map(ts_objects, ~auto.arima(.x))) %>% 
+  mutate(check_residuals = map(airma_models, ~forecast::checkresiduals(.x, plot = F))) %>% 
+  mutate(estacionariedad = map(airma_models, ~urca::ur.kpss(.x$residuals)))
+
+modelos_trimestrales_precioReal <- prices %>% 
+  dplyr::filter(FREQUENCY == "Q" & SUBJECT == "REAL") %>% 
+  mutate(year = as.integer(str_sub(TIME, end = 4)), 
+         trimestre = as.integer(str_sub(TIME, start = 7))) %>% 
+  group_by(Continente, TIME) %>% dplyr::summarise(precio_mediano = mean(Value)) %>% 
+  dplyr::group_by(Continente) %>% nest() %>% 
+  mutate(ts_objects = map(data, ~ts(.x$precio_mediano, start = c(2015, 1), frequency = 4))) %>% 
+  mutate(airma_models = map(ts_objects, ~auto.arima(.x))) %>% 
+  mutate(check_residuals = map(airma_models, ~forecast::checkresiduals(.x, plot = F))) %>% 
+  mutate(estacionariedad = map(airma_models, ~urca::ur.kpss(.x$residuals)))
+```
+
+```{r}
+summarise_models <- modelos_anuales_precioReal %>% 
+  select(Continente, airma_models, check_residuals, estacionariedad) %>% 
+  left_join(modelos_trimestrales_precioReal %>% 
+              select(Continente, airma_models, check_residuals, estacionariedad), 
+            by = "Continente", suffix = c("Anual", "Trimestral"))
+summarise_models
+```
+
+```{r}
+summarise_models %>% mutate(
+  log_likelihood_Anual = map_dbl(airma_modelsAnual, ~.x$loglik),
+  log_likelihood_Trimestral = map_dbl(airma_modelsTrimestral, ~.x$loglik),
+  AIC_Anual = map_dbl(airma_modelsAnual, ~.x$aic),
+  AIC_Trimestral = map_dbl(airma_modelsTrimestral, ~.x$aic),
+  BIC_Anual = map_dbl(airma_modelsAnual, ~.x$bic),
+  BIC_Trimestral = map_dbl(airma_modelsTrimestral, ~.x$bic),
+  p_val_Anual = map_dbl(check_residualsAnual, ~.x$p.value),
+  p_val_Trimestral = map_dbl(check_residualsTrimestral, ~.x$p.value),
+  estacionariedad_Anual = map_dbl(estacionariedadAnual, ~.x@teststat),
+  estacionariedad_Trimestral = map_dbl(estacionariedadTrimestral, ~.x@teststat)) %>% 
+  select(Continente, log_likelihood_Anual, log_likelihood_Trimestral,
+         AIC_Anual, AIC_Trimestral, 
+         BIC_Anual, BIC_Trimestral, 
+         p_val_Anual, p_val_Trimestral, 
+         estacionariedad_Anual, estacionariedad_Trimestral)
+```
+Los modelos anuales tienen mayor soporte estadístico en algunos casos. Veamos las predicciones
+
+```{r}
+for (continente in modelos_anuales_precioReal$Continente){
+  t_s <- (modelos_anuales_precioReal %>% filter(Continente == continente))$ts_objects[[1]]
+  best_model <- (modelos_anuales_precioReal %>% 
+                   filter(Continente == continente))$airma_models[[1]]
+    print(autoplot(t_s, color = "black") + 
+    autolayer(fitted(best_model), color = "royalblue1"))
+}
+```
+
+```{r}
+for (continente in modelos_trimestrales_precioReal$Continente){
+  t_s <- (modelos_trimestrales_precioReal %>% filter(Continente == continente))$ts_objects[[1]]
+  best_model <- (modelos_trimestrales_precioReal %>% 
+                   filter(Continente == continente))$airma_models[[1]]
+    print(autoplot(t_s, color = "black") + 
+    autolayer(fitted(best_model), color = "royalblue1"))
+}
+```
+
+```{r}
+for (continente in modelos_anuales_precioReal$Continente){
+  t_s <- (modelos_anuales_precioReal %>% filter(Continente == continente))$ts_objects[[1]]
+  best_model <- (modelos_anuales_precioReal %>% 
+                   filter(Continente == continente))$airma_models[[1]]
+    print(best_model %>% forecast(h=3) %>% autoplot())
+}
+```
+
+```{r}
+for (continente in modelos_trimestrales_precioReal$Continente){
+  t_s <- (modelos_trimestrales_precioReal %>% filter(Continente == continente))$ts_objects[[1]]
+  best_model <- (modelos_trimestrales_precioReal %>% 
+                   filter(Continente == continente))$airma_models[[1]]
+    print(best_model %>% forecast(h = 3) %>% autoplot() + ggtitle(continente))
+}
+```
+
+Las predicciones son mejores en los modelos trimestrales y los supuestos se siguen cumpliendo (tanto en la independencia de los residuales por la prueba Ljung-Box como por la prueba de estacionariedad KPSS)
+
+```{r}
+gg_best_REAL_model <- function(continente, h = 3){
+  best_model <- (modelos_trimestrales_precioReal %>% 
+                   filter(Continente == continente))$airma_models[[1]]
+  best_model %>% forecast(h = h) %>%
+    autoplot() + 
+    ggtitle(continente) + 
+    labs(x = "") +
+    scale_x_continuous(breaks=c(2015,2017,2019,2021, 2023)) + 
+    theme_minimal() + 
+    theme(legend.position = "none", 
+        plot.title = element_text(hjust = 0.5),
+        text=element_text(size = 8, family="Georgia"))
+}
+america_forecast_precioReal_gg <- gg_best_REAL_model("América") + 
+  labs(y = "Valor del índice") 
+asia_forecast_precioReal_gg <- gg_best_REAL_model("Asia") + labs(y = "")
+europa_forecast_precioReal_gg <- gg_best_REAL_model("Europa") + labs(y = "")
+oceania_forecast_precioReal_gg <- gg_best_REAL_model("Oceanía") + labs(y = "")
+
+america_forecast_precioReal_gg + asia_forecast_precioReal_gg + europa_forecast_precioReal_gg + oceania_forecast_precioReal_gg
+
+P1_precio <- america_forecast_precioReal_gg + asia_forecast_precioReal_gg
+P2_precio <- europa_forecast_precioReal_gg + oceania_forecast_precioReal_gg
+
+ggsave("P1_precioTrimestral.png", plot = P1_precio, width = 3.5, height = 2)
+ggsave("P2_precioTrimestral.png", plot = P2_precio, width = 3.5, height = 2)
+```
+
+```{r}
+modelos_trimestrales_precioReal$airma_models
+```
+
+
+```{r}
+modelos_anuales_precioIngreso <- prices %>% 
+  dplyr::filter(FREQUENCY == "A" & SUBJECT == "PRICEINCOME") %>% 
+  mutate(TIME = as.numeric(TIME)) %>% 
+  group_by(Continente, TIME) %>% dplyr::summarise(precio_mediano = mean(Value)) %>% 
+  dplyr::group_by(Continente) %>% nest() %>% 
+  mutate(ts_objects = map(data, ~ts(.x$precio_mediano))) %>% 
+  mutate(airma_models = map(ts_objects, ~auto.arima(.x))) %>% 
+  mutate(check_residuals = map(airma_models, ~forecast::checkresiduals(.x, plot = F))) %>% 
+  mutate(estacionariedad = map(airma_models, ~urca::ur.kpss(.x$residuals)))
+
+modelos_trimestrales_precioIngreso <- prices %>% 
+  dplyr::filter(FREQUENCY == "Q" & SUBJECT == "PRICEINCOME") %>% 
+  mutate(year = as.integer(str_sub(TIME, end = 4)), 
+         trimestre = as.integer(str_sub(TIME, start = 7))) %>% 
+  group_by(Continente, TIME) %>% dplyr::summarise(precio_mediano = mean(Value)) %>% 
+  dplyr::group_by(Continente) %>% nest() %>% 
+  mutate(ts_objects = map(data, ~ts(.x$precio_mediano, start = c(2015, 1), frequency = 4))) %>% 
+  mutate(airma_models = map(ts_objects, ~auto.arima(.x))) %>% 
+  mutate(check_residuals = map(airma_models, ~forecast::checkresiduals(.x, plot = F))) %>% 
+  mutate(estacionariedad = map(airma_models, ~urca::ur.kpss(.x$residuals)))
+
+summarise_models <- modelos_anuales_precioIngreso %>% 
+  select(Continente, airma_models, check_residuals, estacionariedad) %>% 
+  left_join(modelos_trimestrales_precioIngreso %>% 
+              select(Continente, airma_models, check_residuals, estacionariedad), 
+            by = "Continente", suffix = c("Anual", "Trimestral"))
+
+summarise_models %>% mutate(
+  log_likelihood_Anual = map_dbl(airma_modelsAnual, ~.x$loglik),
+  log_likelihood_Trimestral = map_dbl(airma_modelsTrimestral, ~.x$loglik),
+  AIC_Anual = map_dbl(airma_modelsAnual, ~.x$aic),
+  AIC_Trimestral = map_dbl(airma_modelsTrimestral, ~.x$aic),
+  BIC_Anual = map_dbl(airma_modelsAnual, ~.x$bic),
+  BIC_Trimestral = map_dbl(airma_modelsTrimestral, ~.x$bic),
+  p_val_Anual = map_dbl(check_residualsAnual, ~.x$p.value),
+  p_val_Trimestral = map_dbl(check_residualsTrimestral, ~.x$p.value),
+  estacionariedad_Anual = map_dbl(estacionariedadAnual, ~.x@teststat),
+  estacionariedad_Trimestral = map_dbl(estacionariedadTrimestral, ~.x@teststat)) %>% 
+  select(Continente, log_likelihood_Anual, log_likelihood_Trimestral,
+         AIC_Anual, AIC_Trimestral, 
+         BIC_Anual, BIC_Trimestral, 
+         p_val_Anual, p_val_Trimestral,
+         estacionariedad_Anual,
+         estacionariedad_Trimestral)
+```
+
+```{r}
+gg_best_PRECIOINGRESO_model <- function(continente, h = 3){
+  best_model <- (modelos_trimestrales_precioIngreso %>% 
+                   filter(Continente == continente))$airma_models[[1]]
+  best_model %>% forecast(h = h) %>%
+    autoplot() + 
+    ggtitle(continente) + 
+    labs(x = "") +
+    scale_x_continuous(breaks=c(2015,2017,2019,2021, 2023)) + 
+    theme_minimal() + 
+    theme(legend.position = "none", 
+        plot.title = element_text(hjust = 0.5),
+        text=element_text(size = 8, family="Georgia"))
+}
+america_forecast_precioIngreso_gg <- gg_best_PRECIOINGRESO_model("América") + 
+  labs(y = "Valor del índice")
+asia_forecast_precioIngreso_gg <- gg_best_PRECIOINGRESO_model("Asia") + labs(y = "") 
+europa_forecast_precioIngreso_gg <- gg_best_PRECIOINGRESO_model("Europa") + labs(y = "")
+oceania_forecast_precioIngreso_gg <- gg_best_PRECIOINGRESO_model("Oceanía") + labs(y = "")
+
+america_forecast_precioIngreso_gg + asia_forecast_precioIngreso_gg + europa_forecast_precioIngreso_gg + oceania_forecast_precioIngreso_gg
+
+P1_precioIngreso <- america_forecast_precioIngreso_gg + asia_forecast_precioIngreso_gg
+P2_precioIngreso <- europa_forecast_precioIngreso_gg + oceania_forecast_precioIngreso_gg
+
+ggsave("P1_precioIngresoTrimestral.png", plot = P1_precioIngreso, width = 3.5, height = 2)
+ggsave("P2_precioIngresoTrimestral.png", plot = P2_precioIngreso, width = 3.5, height = 2)
+```
+
+```{r}
+modelos_trimestrales_precioIngreso
+```
+
+
+```{r}
+modelos_trimestrales_precioIngreso$airma_models
+```
+
+
+```{r}
+modelos_anuales_precioRenta <- prices %>% 
+  dplyr::filter(FREQUENCY == "A" & SUBJECT == "PRICERENT") %>% 
+  mutate(TIME = as.numeric(TIME)) %>% 
+  group_by(Continente, TIME) %>% dplyr::summarise(precio_mediano = mean(Value)) %>% 
+  dplyr::group_by(Continente) %>% nest() %>% 
+  mutate(ts_objects = map(data, ~ts(.x$precio_mediano))) %>% 
+  mutate(airma_models = map(ts_objects, ~auto.arima(.x))) %>% 
+  mutate(check_residuals = map(airma_models, ~forecast::checkresiduals(.x, plot = F))) %>% 
+  mutate(estacionariedad = map(airma_models, ~urca::ur.kpss(.x$residuals)))
+
+modelos_trimestrales_precioRenta <- prices %>% 
+  dplyr::filter(FREQUENCY == "Q" & SUBJECT == "PRICERENT") %>% 
+  mutate(year = as.integer(str_sub(TIME, end = 4)), 
+         trimestre = as.integer(str_sub(TIME, start = 7))) %>% 
+  group_by(Continente, TIME) %>% dplyr::summarise(precio_mediano = mean(Value)) %>% 
+  dplyr::group_by(Continente) %>% nest() %>% 
+  mutate(ts_objects = map(data, ~ts(.x$precio_mediano, start = c(2015, 1), frequency = 4))) %>% 
+  mutate(airma_models = map(ts_objects, ~auto.arima(.x))) %>% 
+  mutate(check_residuals = map(airma_models, ~forecast::checkresiduals(.x, plot = F))) %>% 
+  mutate(estacionariedad = map(airma_models, ~urca::ur.kpss(.x$residuals)))
+
+summarise_models <- modelos_anuales_precioRenta %>% 
+  select(Continente, airma_models, check_residuals, estacionariedad) %>% 
+  left_join(modelos_trimestrales_precioRenta %>% 
+              select(Continente, airma_models, check_residuals, estacionariedad), 
+            by = "Continente", suffix = c("Anual", "Trimestral"))
+
+summarise_models %>% mutate(
+  log_likelihood_Anual = map_dbl(airma_modelsAnual, ~.x$loglik),
+  log_likelihood_Trimestral = map_dbl(airma_modelsTrimestral, ~.x$loglik),
+  AIC_Anual = map_dbl(airma_modelsAnual, ~.x$aic),
+  AIC_Trimestral = map_dbl(airma_modelsTrimestral, ~.x$aic),
+  BIC_Anual = map_dbl(airma_modelsAnual, ~.x$bic),
+  BIC_Trimestral = map_dbl(airma_modelsTrimestral, ~.x$bic),
+  p_val_Anual = map_dbl(check_residualsAnual, ~.x$p.value),
+  p_val_Trimestral = map_dbl(check_residualsTrimestral, ~.x$p.value),
+  estacionariedad_Anual = map_dbl(estacionariedadAnual, ~.x@teststat),
+  estacionariedad_Trimestral = map_dbl(estacionariedadTrimestral, ~.x@teststat)) %>% 
+  select(Continente, log_likelihood_Anual, log_likelihood_Trimestral,
+         AIC_Anual, AIC_Trimestral, 
+         BIC_Anual, BIC_Trimestral, 
+         p_val_Anual, p_val_Trimestral,
+         estacionariedad_Anual, estacionariedad_Trimestral)
+```
+
+```{r}
+gg_best_PRECIORENTA_model <- function(continente, h = 3){
+  best_model <- (modelos_trimestrales_precioRenta %>% 
+                   filter(Continente == continente))$airma_models[[1]]
+  best_model %>% forecast(h = h) %>%
+    autoplot() + 
+    ggtitle(continente) + 
+    labs(x = "") +
+    scale_x_continuous(breaks=c(2015,2017,2019,2021, 2023)) + 
+    theme_minimal() + 
+    theme(legend.position = "none", 
+        plot.title = element_text(hjust = 0.5),
+        text=element_text(size = 8, family="Georgia"))
+}
+america_forecast_precioRenta_gg <- gg_best_PRECIORENTA_model("América") + 
+  labs(y = "Valor del índice") 
+asia_forecast_precioRenta_gg <- gg_best_PRECIORENTA_model("Asia") + labs(y = "") 
+europa_forecast_precioRenta_gg <- gg_best_PRECIORENTA_model("Europa") + labs(y = "")
+oceania_forecast_precioRenta_gg <- gg_best_PRECIORENTA_model("Oceanía") + labs(y = "")
+
+P1_precioRenta <- america_forecast_precioRenta_gg + asia_forecast_precioRenta_gg
+P2_precioRenta <- europa_forecast_precioRenta_gg + oceania_forecast_precioRenta_gg
+
+P2_precioRenta
+```
+
