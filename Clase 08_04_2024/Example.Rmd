@@ -1,0 +1,64 @@
+---
+title: "Newspaper"
+output: html_document
+date: "2024-04-02"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+#library(readxl)
+library(survminer)
+library(survival)
+employees <- read_csv("Uncleaned_employees_final_dataset (1).csv")
+
+employees$avg_training_score %>% hist()
+
+```
+
+```{r}
+employees %>% ggplot(aes(x = avg_training_score)) + geom_boxplot()
+```
+
+```{r}
+employees$avg_training_score %>% quantile()
+```
+
+
+```{r}
+employees <- employees %>% mutate(good = if_else(avg_training_score >= 60, 1, 0))
+```
+
+```{r}
+employees$length_of_service %>% is.na() %>% sum()
+```
+
+
+```{r}
+ajusteSurv <- survfit(Surv(employees$length_of_service, employees$good)~1)
+typeof(ajusteSurv)
+```
+
+```{r}
+ajusteSurv$surv
+```
+```{r}
+tibble(time = ajusteSurv$time, surv = ajusteSurv$surv) %>% ggplot(aes(x = time, y = surv)) + geom_step()
+```
+```{r}
+employees %>% ggplot(aes(x = department)) + geom_bar()
+```
+
+```{r}
+employees_RD <- employees %>% filter(department == "R&D")
+employees_SM <- employees %>% filter(department == "Sales & Marketing")
+ajusteSurv_RD <- survfit(Surv(employees_RD$length_of_service, employees_RD$good)~1)
+ajusteSurv_SM <- survfit(Surv(employees_SM$length_of_service, employees_SM$good)~1)
+
+tibble(time = ajusteSurv_RD$time, surv = ajusteSurv_RD$surv) %>% ggplot(aes(x = time, y = surv)) + geom_step(color = "forestgreen") + 
+  geom_step(color = "deeppink2",data = tibble(time = ajusteSurv_SM$time, surv = ajusteSurv_SM$surv))
+```
+
