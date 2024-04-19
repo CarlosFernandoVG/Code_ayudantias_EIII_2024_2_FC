@@ -12,6 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 #library(readxl)
 library(survminer)
+library(patchwork)
 library(survival)
 employees <- read_csv("Uncleaned_employees_final_dataset (1).csv")
 
@@ -135,6 +136,18 @@ HRSurv_risk %>% ggplot(aes(x = Time, y = Risk_rate)) + geom_line()
 ```
 
 ```{r}
+ANSurv <- tibble(Time = ajusteSurv_AN$time, Surv= ajusteSurv_AN$surv)
+
+ANSurv_risk <- ANSurv %>% # Tomamos los datos
+  mutate(Surv_aux = lead(Surv)) %>% # Recorremos la supervivencia para facilitar los cálculos
+  mutate(quotien = Surv_aux/Surv) %>% # Hacemos el cociente
+  mutate(Risk_rate = 1-quotien) %>% #Obtenemos la tasa de fallo
+  head(-1)
+
+ANSurv_risk %>% ggplot(aes(x = Time, y = Risk_rate)) + geom_line()
+```
+
+```{r}
 HRSurv_risk$Risk_rate %>% cumsum() %>% 
   as_tibble() %>% # Una buena estructura de datos
   mutate(Time = row_number()) %>% # Añadimos un índice para el tiempo
@@ -143,15 +156,37 @@ HRSurv_risk$Risk_rate %>% cumsum() %>%
 ```
 
 ```{r}
+ANSurv_risk$Risk_rate %>% cumsum() %>% 
+  as_tibble() %>% # Una buena estructura de datos
+  mutate(Time = row_number()) %>% # Añadimos un índice para el tiempo
+  dplyr::select(Time, value) %>%  # Para un buen orden
+  rename(Time = Time, H = value) %>% ggplot(aes(x =Time, y = H)) + geom_line()
+```
+
+```{r}
 summary_survival <- function(time, datos_surv){
+  all_surv_sums = sum(datos_surv)
   list("Mean" =  sum(datos_surv), 
        "Var" = 2*sum(time*datos_surv)-sum(datos_surv)^2,
        "Residual_median" = tibble(Time = time, 
-                                 mr = rev(cumsum(datos_surv))/datos_surv))
+                                  cumsum_surv = lag(cumsum(datos_surv)),
+                                  mr_2 = rev(cumsum(datos_surv))/datos_surv) %>% 
+         mutate(mr = map_dbl(cumsum_surv, ~sum(all_surv_sums, -.x, na.rm = T))))
 }
 
 summary_survival(ajusteSurv_HR$time, ajusteSurv_HR$surv)$Residual_median %>% 
   ggplot(aes(x = Time, y = mr)) + geom_line()
 ```
 
+```{r}
+(summary_survival(ajusteSurv_HR$time, ajusteSurv_HR$surv)$Residual_median %>%
+  ggplot(aes(x = Time, y = mr)) + geom_line()) + (summary_survival(ajusteSurv_AN$time, ajusteSurv_AN$surv)$Residual_median %>%
+  ggplot(aes(x = Time, y = mr)) + geom_line())
+```
 
+```{r}
+ajusteSurv_AN
+```
+```{r}
+(models_surival_employees %>% filter(department == "Analytics"))$data
+```
