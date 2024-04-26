@@ -1,0 +1,997 @@
+id,Gender,Age,Payment.Method,Churn,Payment
+1,male,64,credit card,loyal,91.74816437
+2,male,35,cheque,churn,79.20001213
+3,female,25,credit card,loyal,90.1570277
+4,female,39,credit card,,69.85221586
+5,male,39,credit card,loyal,79.12670457
+6,female,28,cheque,churn,74.03494147
+7,female,21,credit card,loyal,84.53761211
+8,male,48,credit card,loyal,71.71946948
+9,female,70,credit card,churn,72.83504114
+10,male,36,credit card,loyal,71.97861447
+11,male,22,credit card,loyal,90.57328528
+12,female,53,cash,,83.18100165
+13,male,27,cash,loyal,88.6763306
+14,male,22,cash,loyal,80.19437218
+15,female,49,credit card,churn,81.93307022
+16,female,24,cash,churn,98.47071544
+17,male,45,credit card,loyal,81.61162365
+18,male,45,credit card,loyal,94.04188298
+19,female,66,cash,churn,95.2006868
+20,female,82,cash,churn,84.39588924
+21,female,35,credit card,loyal,82.49958174
+22,female,17,credit card,loyal,71.72936946
+23,male,52,cash,loyal,72.92883027
+24,female,49,credit card,churn,92.86622238
+25,female,33,credit card,,92.24181116
+26,male,40,credit card,loyal,71.33059938
+27,female,53,credit card,churn,81.93843303
+28,female,64,credit card,churn,95.41305952
+29,female,42,credit card,churn,106.5310891
+30,male,66,cash,loyal,91.56391023
+31,female,84,cash,loyal,48.50816653
+32,male,34,cheque,loyal,100.330958
+33,male,46,credit card,loyal,92.05807512
+34,female,71,credit card,,82.04280126
+35,male,68,cash,loyal,102.3691799
+36,female,18,cash,churn,89.27003568
+37,female,49,cash,churn,61.9553206
+38,female,23,credit card,loyal,62.98377926
+39,male,38,credit card,loyal,76.79420809
+40,female,65,cash,churn,91.07761091
+41,female,22,credit card,loyal,81.42767696
+42,male,21,credit card,loyal,90.96066027
+43,female,37,credit card,churn,81.25796543
+44,female,70,credit card,churn,76.71369314
+45,male,81,cash,,79.44271907
+46,female,47,credit card,churn,85.88427153
+47,male,55,cash,churn,85.47664477
+48,male,42,credit card,loyal,66.56214637
+49,male,38,credit card,loyal,101.5279618
+50,female,60,credit card,loyal,81.06677116
+51,male,68,credit card,loyal,83.20218139
+52,male,22,credit card,loyal,78.74123478
+53,male,63,cash,loyal,63.54200805
+54,male,60,cash,loyal,88.45783062
+55,male,25,credit card,churn,76.29932746
+56,male,84,credit card,loyal,80.58104227
+57,male,53,credit card,loyal,87.13130462
+58,female,47,cheque,churn,99.82386581
+59,female,54,cheque,,75.77538132
+60,male,52,credit card,loyal,95.705016
+61,male,25,credit card,loyal,85.50176703
+62,male,52,credit card,loyal,81.27052785
+63,male,47,cash,loyal,76.30509089
+64,female,47,cash,loyal,73.02319004
+65,female,33,credit card,loyal,94.56487032
+66,male,74,credit card,loyal,68.62834205
+67,male,35,credit card,loyal,78.02536584
+68,female,35,credit card,loyal,94.41001863
+69,female,52,cash,loyal,92.09995425
+70,male,20,credit card,loyal,93.51088414
+71,male,50,credit card,loyal,92.42427932
+72,male,38,cheque,loyal,99.4307347
+73,male,66,credit card,loyal,72.83493059
+74,male,19,credit card,loyal,78.90053882
+75,male,42,credit card,loyal,91.55544523
+76,female,35,credit card,churn,90.74819353
+77,female,86,credit card,churn,80.36553056
+78,female,27,credit card,loyal,90.74725826
+79,male,34,credit card,churn,56.65094138
+80,female,64,credit card,churn,74.33166442
+81,male,63,credit card,,89.03029273
+82,female,58,credit card,,86.08454451
+83,male,63,credit card,loyal,75.62254454
+84,male,31,credit card,loyal,85.66960156
+85,female,36,credit card,churn,85.00356506
+86,female,58,cash,churn,69.81628546
+87,male,21,cash,churn,94.52017039
+88,female,27,credit card,loyal,91.25359075
+89,female,45,credit card,,101.3988033
+90,male,51,credit card,loyal,86.05698207
+91,male,42,credit card,loyal,92.11773798
+92,female,67,credit card,churn,77.62153723
+93,female,55,cash,loyal,82.14264741
+94,female,23,credit card,churn,103.6719765
+95,male,36,credit card,loyal,96.71445523
+96,female,89,cash,churn,77.81559672
+97,male,64,cash,loyal,84.41253244
+98,male,72,credit card,loyal,74.76661463
+99,female,33,credit card,,88.81046616
+100,female,50,credit card,churn,88.23709071
+101,male,71,cheque,loyal,91.46638371
+102,male,79,credit card,loyal,98.66813764
+103,female,51,cash,churn,75.69399559
+104,female,72,cash,churn,80.81472466
+105,female,61,cash,churn,97.9623295
+106,female,59,credit card,loyal,85.00918613
+107,male,49,credit card,loyal,104.7890054
+108,female,54,cheque,churn,82.495534
+109,male,26,cash,loyal,63.84767533
+110,male,18,cash,loyal,93.8451977
+111,female,37,cash,loyal,91.69635281
+112,male,40,credit card,,89.17512271
+113,female,42,cash,churn,84.83954363
+114,male,69,credit card,loyal,86.30229224
+115,male,24,credit card,loyal,76.33059373
+116,female,62,cash,churn,77.77943721
+117,male,39,credit card,loyal,90.76335988
+118,female,37,credit card,loyal,83.23465552
+119,female,22,credit card,loyal,83.64771063
+120,male,38,cash,churn,85.61782457
+121,female,28,credit card,loyal,91.18221995
+122,male,53,credit card,loyal,80.86162678
+123,male,36,credit card,,96.758216
+124,female,76,cheque,churn,102.1317566
+125,female,42,credit card,churn,90.88678135
+126,male,65,cash,loyal,85.04360735
+127,male,65,cash,churn,90.88887858
+128,male,24,credit card,loyal,84.71805135
+129,female,31,cash,churn,86.89784609
+130,female,46,cheque,churn,85.0262985
+131,male,68,credit card,loyal,89.49066444
+132,male,42,cash,loyal,85.73836961
+133,female,55,credit card,loyal,95.37536871
+134,female,54,cash,churn,82.16536944
+135,male,81,credit card,churn,83.53469999
+136,male,46,credit card,loyal,80.14033691
+137,female,63,credit card,loyal,87.33061129
+138,male,73,credit card,loyal,76.40470596
+139,male,17,credit card,loyal,92.40319738
+140,female,53,cash,churn,85.70047586
+141,female,17,credit card,loyal,92.5260134
+142,female,91,cheque,loyal,83.91466897
+143,male,35,credit card,loyal,102.2783626
+144,female,80,cash,churn,56.75536917
+145,female,35,credit card,churn,80.29002471
+146,female,67,credit card,loyal,83.76905607
+147,male,46,credit card,loyal,89.12913779
+148,female,50,credit card,churn,98.14361789
+149,female,50,cheque,churn,78.14566354
+150,female,72,credit card,,94.73228191
+151,female,25,cash,churn,85.96941915
+152,female,38,credit card,churn,87.18945061
+153,male,30,cash,loyal,63.41656841
+154,male,27,credit card,loyal,81.88382381
+155,female,32,cash,churn,98.38512055
+156,male,56,credit card,loyal,82.28275366
+157,male,29,credit card,loyal,83.13078206
+158,male,58,credit card,loyal,77.97526553
+159,female,37,credit card,churn,90.87955686
+160,male,49,cash,loyal,83.61717633
+161,male,19,credit card,loyal,91.85577639
+162,male,57,credit card,loyal,71.2056827
+163,female,27,credit card,churn,95.24287111
+164,female,78,cash,churn,91.651895
+165,male,29,credit card,loyal,74.71478709
+166,male,59,cash,loyal,91.56634287
+167,male,62,credit card,loyal,85.5889665
+168,female,57,credit card,churn,94.79182181
+169,female,29,credit card,loyal,73.98144951
+170,female,28,credit card,loyal,63.20622712
+171,male,51,credit card,loyal,82.61021866
+172,male,45,credit card,churn,80.51838921
+173,female,85,cash,churn,87.99097092
+174,female,51,cash,churn,78.74349513
+175,male,34,credit card,loyal,91.08926489
+176,female,66,cash,,82.33453905
+177,male,30,credit card,loyal,89.39701271
+178,female,89,cash,churn,64.85580709
+179,female,33,credit card,churn,91.6515193
+180,female,17,cash,churn,87.39147233
+181,female,50,credit card,loyal,86.65278144
+182,male,42,cheque,churn,97.37334182
+183,male,34,credit card,loyal,69.16624143
+184,female,55,cash,loyal,76.45020412
+185,female,73,cash,churn,96.28387875
+186,male,59,credit card,loyal,84.62407426
+187,male,47,cash,loyal,85.18296481
+188,female,78,cash,churn,95.65467881
+189,female,69,credit card,churn,99.55058514
+190,male,38,cash,loyal,108.4764908
+191,female,17,credit card,churn,80.55628367
+192,male,22,credit card,loyal,85.60804308
+193,female,52,cheque,loyal,95.33847423
+194,female,30,credit card,churn,83.42523003
+195,male,36,cheque,loyal,86.39248247
+196,female,60,cash,churn,103.0803401
+197,female,23,cash,churn,79.85780549
+198,male,40,credit card,loyal,92.68433529
+199,female,27,credit card,loyal,77.42809836
+200,female,52,credit card,churn,98.45744956
+201,male,75,credit card,loyal,64.99779854
+202,male,40,credit card,loyal,89.83132109
+203,male,30,credit card,loyal,88.07315684
+204,male,42,cash,loyal,73.39802272
+205,female,43,cash,loyal,86.77115238
+206,male,61,cash,churn,88.90922811
+207,male,56,credit card,loyal,86.71202463
+208,female,51,credit card,churn,65.18683503
+209,male,37,credit card,loyal,89.05769037
+210,male,17,cheque,,81.80022712
+211,female,30,credit card,loyal,81.3748695
+212,female,35,cash,churn,89.10496711
+213,male,25,cash,churn,90.95799254
+214,male,26,credit card,loyal,83.64285943
+215,female,33,credit card,churn,65.76861463
+216,female,43,credit card,churn,80.68054965
+217,male,21,cash,loyal,89.17007236
+218,male,29,credit card,loyal,94.43759619
+219,male,34,cash,loyal,90.38908785
+220,female,33,credit card,churn,90.47258067
+221,male,17,credit card,loyal,77.90825897
+222,female,79,credit card,churn,82.80510762
+223,male,79,credit card,loyal,105.9530359
+224,male,52,credit card,loyal,82.72101028
+225,female,62,cheque,churn,95.29136572
+226,female,30,credit card,,84.82651581
+227,female,35,credit card,churn,55.97257765
+228,male,31,credit card,loyal,90.20998434
+229,female,47,cash,churn,87.97325636
+230,male,35,credit card,loyal,80.31661867
+231,male,61,credit card,loyal,78.3553173
+232,male,62,credit card,loyal,56.47539599
+233,female,55,credit card,loyal,79.6696319
+234,male,48,cheque,loyal,78.26909944
+235,male,89,cash,loyal,84.71505863
+236,female,33,credit card,churn,97.7906672
+237,female,50,credit card,loyal,82.22474291
+238,male,63,cheque,churn,63.79252328
+239,female,64,credit card,churn,103.2238398
+240,male,74,credit card,loyal,82.2796714
+241,male,33,credit card,loyal,82.89412582
+242,male,55,cheque,,80.64498284
+243,male,81,credit card,loyal,93.8039808
+244,female,81,credit card,loyal,93.6830758
+245,female,50,cash,churn,92.01638707
+246,male,53,cash,loyal,87.88306186
+247,male,56,cheque,loyal,90.82648823
+248,female,50,credit card,churn,78.16822185
+249,female,38,credit card,churn,73.19147267
+250,male,71,credit card,loyal,67.75681722
+251,female,18,credit card,loyal,90.28228782
+252,female,27,credit card,loyal,93.28818216
+253,female,27,cheque,churn,82.75612196
+254,female,86,credit card,churn,69.7507332
+255,male,82,cash,loyal,71.75243735
+256,male,24,cash,loyal,87.30496416
+257,male,29,credit card,loyal,93.74721585
+258,male,45,credit card,loyal,79.3951488
+259,male,35,credit card,loyal,97.78465682
+260,female,18,credit card,,81.08432365
+261,male,90,credit card,loyal,81.59794866
+262,male,51,credit card,loyal,84.82413551
+263,male,27,cash,,82.29692664
+264,female,24,credit card,loyal,96.1971294
+265,male,28,cash,loyal,89.74160401
+266,female,43,cheque,churn,90.18843751
+267,female,21,credit card,churn,86.44410742
+268,female,75,credit card,,81.74276121
+269,female,51,credit card,,97.47347515
+270,male,39,credit card,,88.29542334
+271,male,46,credit card,loyal,96.96709911
+272,female,34,credit card,churn,80.76696242
+273,male,40,credit card,loyal,98.40346877
+274,female,38,cash,churn,78.30003811
+275,male,45,credit card,loyal,95.59126449
+276,female,48,cash,churn,105.6335631
+277,male,55,credit card,churn,98.37215268
+278,female,17,cheque,churn,94.81131871
+279,male,68,credit card,,77.68369917
+280,male,28,credit card,loyal,73.20210872
+281,male,26,credit card,,92.66548627
+282,female,73,cash,churn,86.44383695
+283,female,54,cheque,churn,88.53277113
+284,male,70,credit card,loyal,87.51076161
+285,female,58,cash,churn,93.82323358
+286,male,40,credit card,loyal,77.42898663
+287,female,63,credit card,loyal,79.66624188
+288,female,75,cash,loyal,82.5784409
+289,female,39,credit card,churn,74.21255707
+290,male,31,cash,loyal,88.67553635
+291,male,90,credit card,loyal,67.83158467
+292,male,28,credit card,loyal,97.41576981
+293,male,43,credit card,loyal,85.80171554
+294,male,34,credit card,,95.5518076
+295,male,56,credit card,loyal,84.02582346
+296,male,40,credit card,loyal,111.4355336
+297,female,39,credit card,churn,96.245572
+298,female,40,cash,churn,86.62162914
+299,female,39,credit card,,85.88982868
+300,female,36,credit card,loyal,91.62753164
+301,female,34,credit card,churn,90.03448708
+302,female,86,credit card,loyal,87.39245262
+303,male,52,cash,loyal,84.83186379
+304,male,20,credit card,loyal,86.35349298
+305,male,46,credit card,loyal,85.99798393
+306,male,42,cash,loyal,79.06787647
+307,male,54,credit card,loyal,74.15760883
+308,male,46,credit card,loyal,84.72840224
+309,female,76,credit card,churn,95.45151802
+310,female,20,credit card,loyal,95.47088476
+311,male,51,credit card,loyal,81.09749379
+312,male,54,cash,loyal,90.03689037
+313,female,65,cheque,churn,100.634859
+314,female,55,credit card,loyal,93.05851867
+315,male,17,cash,loyal,79.6044795
+316,female,18,credit card,churn,83.48634232
+317,female,21,credit card,loyal,63.89374845
+318,female,64,cash,churn,80.02392984
+319,male,71,credit card,loyal,88.5482827
+320,male,43,cash,loyal,76.59015241
+321,female,18,cheque,churn,91.44551824
+322,female,39,credit card,churn,81.0941735
+323,male,26,cash,loyal,80.98676021
+324,female,17,credit card,loyal,49.40582346
+325,female,77,credit card,churn,64.29005598
+326,female,45,credit card,churn,75.02615008
+327,male,90,credit card,loyal,87.89913077
+328,male,55,cash,loyal,72.80905444
+329,female,37,credit card,loyal,79.21476182
+330,female,30,credit card,loyal,65.8011122
+331,male,41,credit card,loyal,82.49611427
+332,male,46,cash,churn,78.86348013
+333,male,48,credit card,loyal,87.09707705
+334,male,34,credit card,loyal,73.77811482
+335,male,52,cash,loyal,95.37299195
+336,female,18,credit card,loyal,81.96276909
+337,female,46,credit card,churn,72.55333629
+338,male,53,credit card,,92.36054163
+339,male,64,credit card,loyal,74.28325283
+340,female,30,credit card,,60.85451014
+341,female,52,credit card,,100.0667273
+342,female,75,cash,churn,90.23227195
+343,male,65,credit card,loyal,100.9944716
+344,male,34,credit card,churn,78.77938089
+345,male,27,credit card,churn,76.10486672
+346,male,42,credit card,loyal,84.11579526
+347,male,33,credit card,loyal,84.52660066
+348,male,24,credit card,,80.6871505
+349,female,49,credit card,churn,82.87989785
+350,female,76,credit card,churn,96.27343363
+351,male,41,credit card,loyal,91.13739795
+352,male,71,credit card,,86.5882508
+353,male,43,credit card,loyal,96.45235948
+354,female,44,cash,churn,94.19663045
+355,female,20,credit card,loyal,78.39021121
+356,male,18,credit card,loyal,74.80219307
+357,male,53,cash,churn,65.9043404
+358,male,46,credit card,loyal,79.31023376
+359,female,82,credit card,churn,94.58069793
+360,female,23,credit card,loyal,79.87327688
+361,male,19,cheque,loyal,82.56503572
+362,male,68,cash,churn,71.11056217
+363,male,42,credit card,loyal,94.37875133
+364,male,39,credit card,loyal,78.93304411
+365,male,73,cheque,loyal,83.52159311
+366,male,50,credit card,loyal,59.60785022
+367,male,22,cash,loyal,66.98062909
+368,male,20,credit card,loyal,83.96342479
+369,male,47,cheque,loyal,77.92882396
+370,female,40,credit card,churn,89.11247279
+371,male,23,credit card,loyal,70.01122789
+372,female,21,credit card,loyal,94.21361213
+373,male,64,credit card,loyal,99.12422172
+374,male,39,cash,loyal,94.78470469
+375,male,80,credit card,loyal,80.94433937
+376,female,38,cash,,78.88857623
+377,female,47,credit card,churn,87.3781774
+378,male,85,cash,churn,83.4847192
+379,male,26,cheque,,79.58350858
+380,female,69,credit card,churn,88.5351479
+381,male,18,credit card,loyal,66.57091064
+382,male,18,credit card,loyal,90.51730213
+383,female,40,credit card,churn,110.5264248
+384,male,90,credit card,loyal,77.92352216
+385,female,22,cash,churn,97.70550586
+386,female,36,cash,churn,89.1768311
+387,male,57,credit card,,86.06211523
+388,female,51,credit card,churn,98.10883141
+389,male,63,cash,churn,62.62323839
+390,male,22,cash,loyal,95.35135422
+391,female,33,cash,churn,83.60764898
+392,male,24,credit card,loyal,102.335273
+393,male,44,cash,loyal,104.474955
+394,male,55,credit card,loyal,89.22862165
+395,male,60,credit card,loyal,75.46404957
+396,female,21,credit card,loyal,85.82655351
+397,female,56,credit card,churn,86.44714554
+398,male,51,credit card,,99.22815308
+399,female,33,cash,loyal,81.91559191
+400,male,56,cash,churn,80.7842882
+401,male,61,credit card,loyal,84.82772598
+402,male,91,credit card,loyal,68.82733008
+403,female,44,credit card,churn,76.33893545
+404,female,54,credit card,churn,85.8142836
+405,male,55,cash,loyal,73.47010052
+406,male,20,cash,loyal,75.23916751
+407,male,41,credit card,loyal,76.21572274
+408,male,30,credit card,loyal,91.58328811
+409,male,22,cheque,loyal,75.01590802
+410,female,17,credit card,churn,88.52995762
+411,male,66,credit card,loyal,93.18230888
+412,female,74,credit card,churn,78.28770863
+413,female,49,credit card,churn,95.16917175
+414,male,43,cash,loyal,87.56123944
+415,male,75,cash,loyal,88.15594111
+416,male,52,cash,loyal,100.2440924
+417,male,76,credit card,loyal,68.83452527
+418,female,80,credit card,loyal,96.83633312
+419,male,41,cash,loyal,65.85388409
+420,male,65,cash,loyal,81.05861268
+421,female,51,credit card,churn,100.641843
+422,female,28,credit card,loyal,65.35291319
+423,male,76,credit card,loyal,88.49776411
+424,male,58,credit card,loyal,90.33347597
+425,male,53,credit card,,89.32514726
+426,female,28,credit card,loyal,82.11076462
+427,female,19,credit card,loyal,89.57470502
+428,male,36,credit card,loyal,70.31130537
+429,male,69,cash,churn,66.7113215
+430,male,31,credit card,loyal,84.34559559
+431,male,78,credit card,loyal,88.97606214
+432,male,46,credit card,,85.18054519
+433,male,26,credit card,loyal,85.2260277
+434,female,50,cash,,96.75040435
+435,female,21,credit card,loyal,96.13248039
+436,male,56,credit card,loyal,89.21840826
+437,male,76,credit card,loyal,85.90495412
+438,female,39,cash,churn,87.12268582
+439,male,34,credit card,,80.43251415
+440,female,48,credit card,churn,78.71414915
+441,male,67,credit card,loyal,83.97845304
+442,female,43,credit card,loyal,94.00698701
+443,male,24,credit card,,96.67877639
+444,male,58,cash,loyal,95.36329205
+445,female,34,credit card,,93.71818604
+446,female,67,credit card,churn,81.81230599
+447,male,18,credit card,,84.74447228
+448,male,61,credit card,loyal,78.18968153
+449,male,49,credit card,loyal,80.43309061
+450,male,54,credit card,loyal,77.9637198
+451,male,37,credit card,loyal,68.17794899
+452,male,43,cash,loyal,84.79852322
+453,male,52,cheque,churn,90.55585104
+454,female,51,credit card,churn,68.12104628
+455,female,62,credit card,churn,90.785465
+456,male,51,cash,loyal,89.95520695
+457,female,66,credit card,churn,86.97047249
+458,female,54,credit card,churn,78.44774745
+459,male,70,cash,churn,93.94483408
+460,female,44,credit card,churn,57.7322558
+461,female,70,credit card,,89.63261156
+462,male,48,credit card,,85.81749348
+463,female,59,credit card,churn,91.66570937
+464,male,54,credit card,loyal,82.57700885
+465,female,18,credit card,churn,89.36809734
+466,female,19,credit card,loyal,81.29273544
+467,female,19,credit card,loyal,90.82801828
+468,male,36,credit card,loyal,81.14711345
+469,male,27,cheque,loyal,90.38213954
+470,female,18,credit card,loyal,84.77433192
+471,male,58,cash,loyal,74.62812238
+472,female,18,credit card,,74.70547174
+473,female,36,credit card,churn,90.04283548
+474,male,47,credit card,loyal,84.70285163
+475,male,52,credit card,loyal,79.46199063
+476,male,56,cash,,76.66350212
+477,male,35,credit card,loyal,82.54612685
+478,female,29,credit card,loyal,86.38173639
+479,male,32,credit card,loyal,98.62859527
+480,male,72,cash,loyal,76.97211646
+481,male,71,credit card,loyal,77.3444091
+482,male,49,credit card,loyal,89.96849285
+483,male,77,credit card,loyal,84.27940552
+484,male,21,cash,loyal,87.91517944
+485,female,29,cash,churn,88.66514212
+486,female,47,credit card,,95.91485814
+487,female,19,credit card,loyal,78.84633931
+488,female,63,cheque,churn,84.82232881
+489,male,24,credit card,loyal,80.43754599
+490,female,66,credit card,churn,78.0445625
+491,male,23,credit card,loyal,92.25618097
+492,female,45,credit card,churn,84.98354376
+493,male,30,credit card,loyal,86.00450292
+494,female,72,cash,churn,69.70260597
+495,male,79,cash,churn,87.92060675
+496,male,46,credit card,loyal,84.09509514
+497,female,69,cash,loyal,89.16865241
+498,female,55,cheque,churn,72.71890365
+499,female,27,credit card,loyal,85.87849055
+500,female,25,cash,loyal,87.48196263
+501,female,38,credit card,churn,88.44923391
+502,female,39,credit card,churn,63.35292281
+503,male,76,credit card,loyal,94.13794292
+504,male,34,cash,loyal,90.58640356
+505,female,52,cash,,67.27454096
+506,female,57,credit card,churn,84.78886685
+507,female,23,credit card,loyal,91.18078584
+508,female,71,credit card,,77.9144922
+509,male,58,credit card,loyal,104.3328405
+510,female,17,credit card,churn,94.55468893
+511,female,47,cash,churn,88.68331949
+512,male,41,cash,churn,81.69722298
+513,male,59,credit card,loyal,89.47260627
+514,male,19,credit card,loyal,86.8607011
+515,female,18,credit card,,75.21854034
+516,male,53,credit card,loyal,82.93486503
+517,male,44,credit card,loyal,86.40177609
+518,male,33,credit card,loyal,101.6272547
+519,male,28,cash,loyal,94.85391945
+520,male,78,credit card,churn,85.6123942
+521,female,30,cash,churn,82.3384609
+522,male,51,credit card,loyal,91.11602737
+523,female,39,credit card,,97.48061351
+524,female,80,credit card,churn,77.82759227
+525,male,40,credit card,loyal,78.36135354
+526,female,53,cash,churn,78.26559667
+527,male,28,credit card,loyal,92.22070469
+528,female,87,credit card,churn,75.56339756
+529,female,36,credit card,churn,85.42706268
+530,female,20,credit card,loyal,90.48897263
+531,male,37,cash,churn,91.30850477
+532,male,55,cheque,churn,95.27643076
+533,male,72,cash,loyal,82.7045907
+534,female,55,credit card,,88.63056444
+535,male,36,cash,loyal,95.92101941
+536,male,34,credit card,loyal,82.40906915
+537,male,41,credit card,loyal,75.5510526
+538,female,17,credit card,loyal,83.34287785
+539,male,30,credit card,loyal,84.336329
+540,male,17,credit card,loyal,77.19358178
+541,female,83,credit card,churn,103.5943857
+542,female,46,cheque,,74.02844109
+543,female,59,credit card,,83.15156402
+544,male,18,cash,loyal,79.69790632
+545,male,28,credit card,loyal,66.50244572
+546,male,26,cash,loyal,95.44516548
+547,female,33,credit card,churn,81.96962571
+548,male,21,credit card,loyal,75.12995482
+549,female,55,cash,churn,97.97925399
+550,male,68,cash,loyal,72.00114142
+551,female,29,credit card,loyal,71.73396799
+552,male,32,credit card,loyal,95.79823011
+553,male,57,cash,churn,81.13696374
+554,female,63,credit card,churn,84.42207546
+555,female,47,cash,churn,87.29131346
+556,female,31,credit card,churn,86.5962319
+557,female,27,cash,churn,70.59524802
+558,female,18,cash,churn,77.95347302
+559,female,51,credit card,churn,92.07589568
+560,male,17,credit card,loyal,74.59608416
+561,male,48,credit card,loyal,90.89223073
+562,male,25,credit card,loyal,71.05182482
+563,female,42,cash,churn,87.38796356
+564,female,42,credit card,churn,87.02370674
+565,male,49,credit card,,68.09616638
+566,male,47,cash,loyal,93.03736423
+567,female,45,cash,churn,86.49920002
+568,female,49,credit card,loyal,65.10438991
+569,male,34,credit card,loyal,56.01987147
+570,female,39,credit card,churn,78.72782283
+571,female,29,credit card,churn,88.8262186
+572,female,32,cash,loyal,96.04237459
+573,male,25,cash,loyal,93.01764754
+574,male,21,credit card,loyal,85.22031098
+575,female,57,cash,churn,80.2096185
+576,female,64,credit card,churn,92.70831341
+577,female,51,cash,churn,87.70317662
+578,male,24,credit card,loyal,86.68652513
+579,male,60,credit card,loyal,89.22893499
+580,male,35,credit card,loyal,93.10113267
+581,male,54,credit card,loyal,75.14714336
+582,female,55,cash,churn,78.18228059
+583,male,40,cash,loyal,90.60186919
+584,male,43,cash,,87.65993211
+585,male,91,credit card,loyal,89.94509379
+586,female,40,cash,loyal,57.2375676
+587,male,51,cash,loyal,71.36193744
+588,female,46,credit card,churn,92.4733673
+589,female,76,cash,,86.58178564
+590,male,54,cash,churn,68.81895452
+591,female,17,credit card,loyal,86.85654753
+592,female,21,cheque,churn,90.8332191
+593,female,18,credit card,loyal,86.53248914
+594,female,20,credit card,loyal,85.81040648
+595,male,27,cash,loyal,82.83879375
+596,male,28,credit card,loyal,82.33506205
+597,female,44,credit card,churn,98.51145391
+598,male,21,credit card,loyal,85.2867887
+599,male,32,cash,churn,81.94760472
+600,female,37,cash,churn,92.01652375
+601,male,18,cash,loyal,80.83626631
+602,female,89,credit card,churn,91.46412296
+603,male,41,credit card,loyal,91.18636113
+604,male,72,cash,loyal,80.47731319
+605,female,29,cheque,churn,75.59694332
+606,male,46,credit card,loyal,64.55903253
+607,female,61,cash,churn,96.81705834
+608,male,20,credit card,,74.14027788
+609,male,45,credit card,loyal,82.49882544
+610,female,62,credit card,,80.79042138
+611,male,51,credit card,loyal,84.3069752
+612,female,74,credit card,loyal,82.34458598
+613,male,48,credit card,churn,81.33082415
+614,male,28,cash,loyal,86.89915707
+615,female,46,credit card,churn,85.16958094
+616,female,32,credit card,churn,94.85902398
+617,female,53,cash,churn,100.0106559
+618,male,57,credit card,loyal,100.6164374
+619,male,22,cash,loyal,86.17646029
+620,male,49,credit card,loyal,85.01390138
+621,male,63,credit card,loyal,100.7435127
+622,male,90,credit card,loyal,85.94762655
+623,male,57,cheque,loyal,83.67320104
+624,female,28,credit card,loyal,83.23577981
+625,female,17,cash,loyal,87.94952737
+626,male,50,cash,loyal,91.71741469
+627,male,51,credit card,loyal,86.04127236
+628,female,74,credit card,churn,87.32887712
+629,female,73,credit card,churn,88.010699
+630,male,52,cash,loyal,72.0912134
+631,female,52,credit card,churn,73.35877791
+632,male,19,credit card,loyal,67.19712537
+633,male,54,cash,loyal,83.20897499
+634,male,26,credit card,loyal,85.88036446
+635,female,25,cheque,loyal,82.81482109
+636,male,42,credit card,loyal,76.34678324
+637,female,78,cash,,88.68355326
+638,male,34,credit card,loyal,75.93030896
+639,female,19,credit card,churn,80.47428619
+640,female,27,cash,churn,76.5203158
+641,male,81,credit card,loyal,74.13091695
+642,female,32,cheque,churn,96.50414569
+643,male,70,cash,loyal,85.1873045
+644,female,23,credit card,churn,96.70072589
+645,female,17,credit card,loyal,74.94161024
+646,male,19,cash,loyal,77.69713111
+647,female,42,credit card,,80.91650303
+648,female,27,credit card,loyal,78.2439826
+649,female,57,credit card,churn,92.89484382
+650,male,57,credit card,loyal,75.78737983
+651,male,67,cash,loyal,91.26439375
+652,female,63,cheque,churn,84.39506336
+653,female,40,credit card,churn,84.99913936
+654,male,21,cash,,94.61958241
+655,female,58,credit card,churn,86.94856
+656,male,23,cash,loyal,80.40224498
+657,male,76,credit card,churn,66.93587123
+658,female,73,cash,loyal,76.96501123
+659,female,40,cash,churn,82.57221559
+660,male,33,credit card,loyal,83.68879074
+661,male,54,credit card,loyal,84.47012975
+662,female,17,credit card,loyal,99.87543855
+663,male,51,cash,loyal,88.06086116
+664,female,48,credit card,loyal,85.84182175
+665,male,43,credit card,loyal,73.80148825
+666,male,36,credit card,churn,61.64811541
+667,female,22,credit card,loyal,87.83629186
+668,male,62,credit card,loyal,80.99166024
+669,male,43,credit card,loyal,79.28270159
+670,female,42,credit card,loyal,93.27290707
+671,male,22,cash,loyal,75.86931187
+672,male,64,credit card,churn,88.56966453
+673,male,34,cheque,loyal,80.4297822
+674,female,42,credit card,churn,91.78870741
+675,female,19,cash,churn,78.26307457
+676,male,36,credit card,loyal,70.89071502
+677,male,39,credit card,loyal,84.37743671
+678,male,83,credit card,loyal,89.95687406
+679,female,28,credit card,loyal,91.30013927
+680,male,68,cash,loyal,85.02499324
+681,male,48,credit card,loyal,81.05663059
+682,female,60,credit card,churn,81.9986085
+683,male,76,credit card,churn,100.7634382
+684,female,50,cheque,churn,86.99943032
+685,female,21,credit card,loyal,76.3242056
+686,female,46,credit card,loyal,89.86749868
+687,female,35,credit card,loyal,93.10151416
+688,male,27,cheque,loyal,68.85762155
+689,male,39,credit card,loyal,83.49877078
+690,male,61,credit card,loyal,79.70625907
+691,female,20,credit card,loyal,80.38585291
+692,female,22,credit card,loyal,92.07278373
+693,female,53,credit card,churn,63.75692961
+694,male,20,cash,loyal,77.26301607
+695,male,34,credit card,,84.05404093
+696,male,52,credit card,loyal,84.52449091
+697,male,36,credit card,loyal,97.845857
+698,female,52,credit card,churn,92.84832081
+699,male,28,credit card,loyal,85.26611703
+700,male,40,credit card,,64.21497425
+701,male,32,credit card,loyal,97.99434369
+702,female,18,credit card,loyal,83.09194943
+703,female,22,cheque,churn,91.0578745
+704,male,81,credit card,loyal,79.49259776
+705,female,52,cash,churn,73.59289562
+706,female,76,credit card,churn,82.19387646
+707,male,43,credit card,loyal,82.51659445
+708,male,23,credit card,loyal,68.40264159
+709,male,34,credit card,loyal,83.69780818
+710,female,38,credit card,loyal,81.00619105
+711,female,33,credit card,churn,82.25742515
+712,male,48,cash,loyal,96.71039418
+713,male,41,cash,loyal,90.01945293
+714,male,78,credit card,loyal,91.40252368
+715,female,51,credit card,loyal,89.47132663
+716,male,42,credit card,loyal,93.60367554
+717,male,72,cash,loyal,87.29438211
+718,female,20,cash,loyal,86.05679385
+719,male,69,cash,loyal,90.90092298
+720,male,37,cash,loyal,96.2088207
+721,female,45,credit card,churn,80.00345414
+722,female,77,credit card,churn,90.86460556
+723,male,79,credit card,loyal,64.89448977
+724,male,56,credit card,,72.09341639
+725,male,44,credit card,loyal,74.65307635
+726,male,30,cash,loyal,71.02727399
+727,female,50,cash,loyal,89.14000416
+728,male,57,cash,churn,97.48621894
+729,male,42,credit card,churn,73.68576881
+730,female,64,cash,churn,90.92814643
+731,female,50,cash,churn,93.49830506
+732,male,28,cash,loyal,76.67779078
+733,male,50,cash,loyal,75.02373511
+734,female,41,credit card,churn,99.45762294
+735,female,64,credit card,churn,92.64254132
+736,female,81,credit card,churn,92.83624623
+737,female,48,cash,churn,93.01111619
+738,male,84,credit card,loyal,95.06628196
+739,male,29,credit card,loyal,77.53912465
+740,male,26,cash,,81.25270573
+741,female,42,credit card,churn,84.03022152
+742,female,40,credit card,churn,93.07117269
+743,male,79,credit card,loyal,83.26568898
+744,male,70,credit card,,95.61523393
+745,male,51,cheque,,75.12362791
+746,female,24,cheque,churn,95.93453601
+747,female,17,credit card,loyal,92.63369816
+748,male,17,credit card,,88.34280383
+749,male,18,credit card,loyal,79.97468545
+750,male,45,credit card,loyal,100.384833
+751,male,51,cash,loyal,94.43124914
+752,male,17,credit card,loyal,82.21580121
+753,female,74,credit card,churn,86.91363229
+754,female,35,credit card,churn,68.35699229
+755,male,19,cash,,89.06586426
+756,male,24,credit card,loyal,74.46972788
+757,male,58,credit card,loyal,92.05975477
+758,female,45,credit card,churn,91.83294454
+759,female,43,credit card,,82.70642766
+760,female,76,cash,churn,78.35415744
+761,female,58,cash,loyal,80.72592602
+762,male,33,cheque,loyal,84.00835575
+763,male,81,cash,loyal,53.55349591
+764,female,20,credit card,loyal,80.38251886
+765,male,52,cash,loyal,87.05676523
+766,male,22,cash,loyal,84.02515759
+767,female,18,credit card,loyal,91.08856651
+768,male,65,cash,,81.39741677
+769,female,17,credit card,loyal,75.82352879
+770,female,29,credit card,loyal,81.94623717
+771,female,72,credit card,churn,84.28701608
+772,male,39,cash,loyal,69.34507645
+773,male,33,cheque,loyal,80.48841316
+774,male,52,credit card,loyal,90.80012674
+775,male,62,credit card,loyal,89.33967374
+776,male,17,credit card,loyal,98.74423499
+777,female,30,credit card,loyal,91.90610881
+778,female,30,credit card,loyal,82.15198169
+779,female,59,cash,churn,80.17113787
+780,female,40,cash,churn,92.66873899
+781,male,26,credit card,,81.99487451
+782,female,51,credit card,churn,89.97173674
+783,male,59,credit card,,94.27189599
+784,male,30,credit card,loyal,73.55691057
+785,male,54,cash,loyal,88.09293266
+786,male,39,credit card,loyal,96.77877575
+787,male,37,credit card,,78.60259658
+788,female,37,cheque,churn,87.51345515
+789,female,43,cash,loyal,70.1680719
+790,male,42,cash,churn,93.283509
+791,male,36,credit card,loyal,85.96452873
+792,male,43,cash,loyal,59.85261991
+793,female,30,credit card,loyal,65.59916287
+794,female,38,credit card,churn,78.29659015
+795,female,67,credit card,churn,90.0416581
+796,male,18,credit card,loyal,83.15626821
+797,male,71,cash,churn,83.91650009
+798,male,45,cheque,loyal,66.0184482
+799,female,59,credit card,churn,79.71452369
+800,female,39,credit card,churn,68.9917091
+801,male,41,credit card,,87.81792595
+802,male,70,cash,loyal,95.89764685
+803,male,31,cash,loyal,93.20739646
+804,male,91,credit card,loyal,87.30883037
+805,male,59,credit card,loyal,92.84486741
+806,male,47,credit card,loyal,79.91374702
+807,female,56,credit card,churn,84.12284715
+808,male,44,cash,loyal,81.68537496
+809,male,78,credit card,churn,95.63701682
+810,female,35,credit card,churn,92.93277204
+811,male,27,credit card,loyal,96.37049394
+812,male,57,cash,loyal,82.06465482
+813,male,21,credit card,,78.27936768
+814,male,53,credit card,loyal,90.11439261
+815,female,90,credit card,loyal,88.2087364
+816,male,32,credit card,churn,76.59946183
+817,female,41,cash,churn,68.99096499
+818,female,47,credit card,churn,93.97229653
+819,male,90,credit card,loyal,87.84945214
+820,male,72,cash,loyal,79.68115084
+821,male,42,cash,loyal,96.85742876
+822,male,59,cheque,loyal,82.83856255
+823,female,29,cash,loyal,84.8376029
+824,male,39,credit card,loyal,78.46860402
+825,female,41,cheque,loyal,90.85138788
+826,female,28,cash,churn,89.43498958
+827,female,72,credit card,churn,88.08428662
+828,female,45,cheque,loyal,86.7353245
+829,female,26,credit card,loyal,87.1656229
+830,female,29,credit card,loyal,89.61095804
+831,female,28,credit card,loyal,100.8261436
+832,male,21,credit card,,88.17067893
+833,male,40,credit card,loyal,89.3486234
+834,male,85,credit card,loyal,81.21708535
+835,female,50,credit card,loyal,98.52103856
+836,male,21,credit card,loyal,72.06863783
+837,female,60,credit card,,88.96971574
+838,female,76,cash,loyal,71.1737198
+839,female,84,credit card,churn,98.81961926
+840,female,49,credit card,churn,86.35100132
+841,female,39,cash,churn,77.77836881
+842,male,17,credit card,loyal,77.03174456
+843,female,54,credit card,churn,97.2587102
+844,male,64,cash,loyal,74.24940516
+845,male,32,cash,loyal,98.34641964
+846,male,35,cash,loyal,82.48630818
+847,male,34,cash,loyal,89.99941063
+848,female,33,credit card,churn,86.19236212
+849,male,22,credit card,loyal,73.82190069
+850,female,73,cheque,churn,86.70896907
+851,male,39,credit card,loyal,74.03608469
+852,female,47,cash,churn,87.71647991
+853,female,26,credit card,loyal,75.16910772
+854,male,67,cash,loyal,89.93378191
+855,male,52,credit card,loyal,95.7309727
+856,female,23,credit card,loyal,83.88994689
+857,female,61,cash,churn,67.99118924
+858,female,55,credit card,loyal,93.17747477
+859,male,71,cheque,,90.77936058
+860,female,42,credit card,loyal,81.13733912
+861,male,42,credit card,loyal,90.56820015
+862,female,69,cash,churn,58.63779807
+863,male,34,cash,loyal,85.41764718
+864,female,20,credit card,loyal,91.50720502
+865,male,86,credit card,churn,88.596166
+866,male,44,cheque,loyal,88.84023975
+867,female,83,cash,churn,86.99676378
+868,male,25,credit card,loyal,89.44029388
+869,male,45,cash,loyal,73.02786586
+870,male,19,credit card,loyal,73.31239224
+871,male,45,credit card,loyal,79.84653244
+872,female,43,credit card,,88.77291037
+873,male,31,credit card,loyal,79.4630672
+874,male,20,credit card,loyal,81.75225164
+875,male,56,credit card,loyal,76.39047661
+876,female,61,credit card,churn,87.24418197
+877,male,20,credit card,loyal,77.30750978
+878,female,25,credit card,loyal,84.66773147
+879,male,45,cash,loyal,87.91145018
+880,female,38,credit card,churn,84.63292767
+881,male,37,cheque,churn,85.47806687
+882,male,44,credit card,,92.06645598
+883,male,51,credit card,loyal,93.60128933
+884,male,27,credit card,loyal,82.00523998
+885,female,42,cash,churn,82.73131868
+886,male,37,credit card,,90.93380938
+887,male,20,cash,loyal,88.37658235
+888,female,55,credit card,,88.72086445
+889,male,64,credit card,,83.75440014
+890,male,56,credit card,loyal,99.72600203
+891,female,66,cash,,76.19762884
+892,female,69,credit card,churn,95.88670493
+893,male,89,cash,churn,77.63746858
+894,male,41,credit card,loyal,96.34377915
+895,male,48,credit card,loyal,76.12646429
+896,male,38,credit card,loyal,81.41935507
+897,male,38,cash,churn,86.10320127
+898,male,67,cash,churn,89.87329074
+899,male,87,cheque,loyal,101.0321402
+900,male,29,cash,loyal,84.15617233
+901,female,51,credit card,churn,89.68654901
+902,male,31,credit card,loyal,100.3156165
+903,female,34,credit card,churn,64.45672774
+904,male,32,credit card,loyal,92.98631084
+905,female,26,cheque,loyal,74.2206678
+906,male,65,credit card,loyal,90.36514127
+907,male,43,credit card,loyal,82.54851563
+908,female,45,credit card,churn,77.94298958
+909,female,57,cash,loyal,80.87444126
+910,male,34,credit card,churn,96.56251419
+911,female,18,credit card,churn,87.65087808
+912,female,70,cash,loyal,93.86847139
+913,female,75,credit card,,56.54135946
+914,female,46,credit card,loyal,87.69614003
+915,male,24,credit card,loyal,86.0109622
+916,male,52,credit card,loyal,83.11949004
+917,female,48,cash,loyal,88.50114129
+918,female,27,cash,churn,83.02887453
+919,male,26,credit card,loyal,74.09745082
+920,male,57,cash,,92.25296757
+921,female,66,credit card,churn,82.5835353
+922,male,49,credit card,loyal,77.74013905
+923,female,55,credit card,loyal,93.97288669
+924,female,24,cash,churn,70.84419879
+925,female,63,cash,loyal,87.28285785
+926,female,52,credit card,churn,82.4985446
+927,male,25,cash,loyal,82.8312655
+928,female,30,credit card,loyal,76.01636444
+929,male,63,cheque,loyal,77.76594088
+930,female,76,credit card,churn,91.77103022
+931,female,69,cheque,churn,79.17241379
+932,female,43,cash,churn,84.80822907
+933,male,42,credit card,loyal,85.25212295
+934,male,51,credit card,loyal,99.18738512
+935,male,44,credit card,loyal,77.01328748
+936,male,51,credit card,loyal,74.04396291
+937,male,30,credit card,loyal,90.92463622
+938,male,48,cheque,,81.40702004
+939,female,28,credit card,churn,66.10947769
+940,male,50,credit card,loyal,87.4269784
+941,male,25,credit card,loyal,69.7257017
+942,male,56,cash,churn,94.35050845
+943,female,17,credit card,churn,83.82152134
+944,female,59,credit card,churn,77.40579011
+945,female,70,cash,churn,90.28265834
+946,male,45,cash,churn,96.51390834
+947,male,43,cash,loyal,76.68591753
+948,male,50,credit card,loyal,86.03635858
+949,male,46,cash,loyal,79.92011019
+950,female,25,credit card,,82.60971682
+951,male,43,credit card,,91.69250084
+952,male,29,cash,loyal,76.93973759
+953,male,49,credit card,loyal,83.01093111
+954,female,43,cash,churn,80.48917007
+955,male,35,cash,churn,63.30428905
+956,male,19,credit card,loyal,91.68780304
+957,male,76,cash,churn,88.09046687
+958,female,53,credit card,loyal,96.06857662
+959,female,64,credit card,churn,90.89791803
+960,female,42,credit card,churn,88.83647421
+961,male,53,credit card,loyal,96.8375509
+962,female,66,credit card,churn,89.5435236
+963,female,73,cash,churn,90.83415473
+964,male,31,credit card,loyal,92.70524321
+965,male,68,credit card,loyal,80.19061492
+966,female,38,credit card,churn,77.74207418
+967,female,39,credit card,churn,83.0514371
+968,male,23,cash,loyal,88.53947793
+969,female,52,cash,churn,80.67902014
+970,male,38,credit card,loyal,84.51932901
+971,male,81,cash,loyal,71.9038586
+972,male,20,cash,loyal,78.63881723
+973,female,20,credit card,churn,83.6538868
+974,male,40,credit card,,99.20537519
+975,male,29,cash,,100.0274176
+976,male,90,cash,,106.902781
+977,female,42,credit card,churn,83.27409086
+978,male,80,cheque,loyal,89.62926603
+979,male,43,credit card,loyal,98.11098473
+980,male,23,credit card,loyal,87.14810474
+981,female,29,credit card,loyal,90.91479613
+982,female,44,credit card,churn,91.37848765
+983,male,37,cash,loyal,98.62410008
+984,male,26,credit card,loyal,91.31997354
+985,male,21,credit card,loyal,81.47744885
+986,female,80,cheque,churn,79.33415997
+987,male,50,cash,loyal,94.46469829
+988,female,28,credit card,loyal,87.99498273
+989,male,82,cash,loyal,67.41447289
+990,male,64,credit card,,97.81319464
+991,male,19,credit card,loyal,75.98751051
+992,female,29,credit card,loyal,99.5602088
+993,male,84,credit card,loyal,99.41940571
+994,male,20,credit card,,96.54306524
+995,male,19,credit card,loyal,78.45810601
+996,female,24,credit card,loyal,74.6382937

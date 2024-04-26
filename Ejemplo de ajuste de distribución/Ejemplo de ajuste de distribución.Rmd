@@ -1,0 +1,331 @@
+---
+title: "Ejemplo de ajuste de distribución"
+author: "Vásquez Guerra Carlos Fernando"
+header-includes:
+  - \usepackage[all]{xy}
+  - \usepackage{enumitem}  
+  - \usepackage{caption}
+  - \captionsetup{labelformat=empty}
+  - \usepackage{amsmath,amssymb}
+output:
+  pdf_document:
+    df_print: kable
+    fig_caption: yes
+    toc_depth: 5
+    fig_width: 7
+    fig_height: 3.7
+    extra_dependencies: ["amsfonts", "dsfont", "mathrsfs", "bbold"]
+---
+
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(
+      echo = FALSE, 
+      fig.pos = 'H', 
+      fig.align = 'center', 
+      message = FALSE, 
+      warning = FALSE
+)
+```
+
+El archivo `payments.csv` contiene información de clientes que hicieron pagos por una deuda del mismo tipo, es de interés para la compañía modelar los pagos que se están realizando.
+
+```{r}
+if (!require(tidyverse)){
+  install.packages("tidyverse", dependencies = TRUE)
+  library(tidyverse)}
+if (!require(visdat)){
+  install.packages("visdat", dependencies = TRUE)
+  library(visdat)}
+if (!require(GGally)){
+  install.packages("GGally", dependencies = TRUE)
+  library(GGally)}
+if (!require(scales)){
+  install.packages("scales", dependencies = TRUE)
+  library(scales)}
+if (!require(moments)){
+  install.packages("moments", dependencies = TRUE)
+  library(moments)}
+if (!require(RColorBrewer)){
+  install.packages("RColorBrewer", dependencies = TRUE)
+  library(RColorBrewer)}
+if (!require(gridExtra)){
+  install.packages("gridExtra", dependencies = TRUE)
+  library(gridExtra)}
+if (!require(fitdistrplus)){
+  install.packages("fitdistrplus", dependencies = TRUE)
+  library(fitdistrplus)}
+if (!require(ADGofTest)){
+  install.packages("ADGofTest", dependencies = TRUE)
+  library(ADGofTest)}
+if (!require(actuar)){
+  install.packages("actuar", dependencies = TRUE)
+  library(actuar)}
+if (!require(evd)){
+  install.packages("evd", dependencies = TRUE)
+  library(evd)}
+if (!require(GoFKernel)){
+  install.packages("GoFKernel", dependencies = TRUE)
+  library(GoFKernel)}
+
+datos <- read_csv("payments.csv")
+```
+
+La base proporcionada tiene 6 variables en total las siguientes se enlistan a continuación: 
+
++ `id` : Identificador de la persona que realiza el pago.
++ `Gender`: Genero del cliente (`male` o `female`).
++ `Age`: Edad del cliente.
++ `Payment.Method` : Métodod de pago que uso el usuario (`credit card`, `cheque` o `cash`).
++ `Churn` : Identifica si el cliente se ha retirado de la empresa (`churn`) o sigue con ella (`loyal`).
++ `Payment` : Cantidad monetaria que realizo el usuario.
+
+```{r}
+datos %>% head()
+```
+
+```{r}
+datos %>% ggplot(aes(x = Payment)) + 
+  geom_density()
+```
+
+```{r}
+#Primero separamos los datos en numéricos y no numéricos en una función
+
+type_of_data <- function(data){
+  classes <- sapply(data, function(x) class(x))
+  fac <- data[, which(classes %in% c("character", "factor"))]
+  num <- data[, -which(classes %in% c("character", "factor"))]
+  return(list(fac = fac, num = num))
+}
+
+#Función para obtener la moda de los datos
+
+my_mode <- function(x){
+  if (class(x) %in% c("character", "factor")) {
+    table(x) %>%
+      which.max() %>%
+      names()
+  }
+  else {
+    table(round(x, 2)) %>%
+      which.max() %>%
+      names()
+  }
+}
+
+#Ahora creamos estadísticas
+
+Profiling <- function(data_frame, type = "categorical"){
+    n <- dim(data_frame)[1]
+  
+  # cardinalidad
+  uniques <- data.frame(uniques = sapply(data_frame, function(x) unique(x) %>% length()))
+  
+  # unicidad (proporción de valores únicos)
+  uniqueness <- uniques %>% mutate(uniqueness = round(uniques/n * 100, 10))
+  
+  # buscamos valores NA
+  nan <- data.frame("missing_values" = sapply(data_frame, function(x) sum(is.na(x))))
+  
+  # obtenemos la moda
+  mode <- data.frame(mode = sapply(data_frame, function(x) my_mode(x)))
+  
+  type_of = data.frame("type" = sapply(data_frame, function(x) typeof(x)))
+  
+  if (type == "numerical"){
+    # valor mínimo
+    min <- data.frame(min = sapply(data_frame, function(x) min(x, na.rm = TRUE)))
+    
+    # valor máximo
+    max <- data.frame(max = sapply(data_frame, function(x) max(x,na.rm = TRUE)))
+    
+    # media
+    mean <- data.frame(mean = sapply(data_frame, function(x) mean(x, na.rm = TRUE)))
+
+    # desviación estandar
+    stddev <- data.frame(stddev = sapply(data_frame, function(x) sd(x, na.rm = TRUE)))
+    
+    profiling_df <- cbind(uniqueness, nan, mode, min, max,
+                          mean, stddev, type_of)
+    profiling_df
+  }
+  else {
+    profiling_df <- cbind(uniqueness, nan, mode, type_of)
+    profiling_df
+  }
+}
+```
+
+Tratando a los datos de una forma más exhaustiva, se tienen las siguientes características:
+
+```{r}
+division_datos <- type_of_data(datos)
+Profiling(division_datos$fac) %>% 
+  rename(Unicos = uniques, "%Unicos" = uniqueness, "Valores Perdidos"= missing_values, Moda = mode, Tipo = type)
+```
+
+```{r}
+datos$Churn %>% table()
+```
+
+
+```{r}
+Profiling(division_datos$num, type = "numerical") %>%
+  dplyr::select(-c(missing_values, mode))%>% 
+  rename(Unicos = uniques, 
+         "%Unicos" = uniqueness, 
+         Tipo = type,
+         "Mínimo" = min,
+         "Máximo" = max,
+         Media = mean, 
+         "Desviación estandar"= stddev)
+```
+
+Hay que destacar algunos puntos importantes:
+
++ No importa que existan valores nulos en la variable `Churn` ya que no es la variable de interés, al menos para las instrucciones dadas.
++ De manera rápida identificamos que la mayoría de clientes son hombres, tiene 42 años, al menos 17 y máximo 91 años, utilizan tarjeta de crédito, todos los usuarios tienen han realizado pagos diferentes y, en promedio, los usuarios deben $84.64396\pm9.49986$ unidades monetarias.
+
+De manera general, esta la información que se tienen de los datos nulos sobre las variables.
+
+```{r}
+visdat::vis_miss(datos, sort_miss=TRUE, warn_large_data = FALSE)
+```
+
+No es de nuestro interés, al menos por el momento, arreglar los problemas con los valores perdidos, por que eso es todo lo que se mencionará sobre estos; además, no afectan a la variable que es de nuestro interés en este momento.
+
+De manera rápida, para ver algunas relaciones y comportamientos de las variables dos a dos; se tiene la siguiente gráfica donde las gráficas de color rojo representan a los clientes de genero femenino y las de color azul para los hombres.
+
+```{r}
+ggpairs(datos %>% dplyr::select(-id), mapping = aes(colour = Gender, alpha = 0.95))
+```
+
+Con esto, podemos ver la siguiente información de manera más clara: 
+
++ La cantidad de hombres y mujeres solo varia por cien clientes.
++ No hay una tendencia significativa que indique que las mujeres o los hombres pagan deudas más grandes que el otro género y lo mismo sucede con el método de pago y la edad.
+
+Es de principal interés analizar el comportamiento de los pagos, por lo que se tiene una ampliación de la densidad de estos a continuación y más gráficas que serán de ayuda
+
+```{r}
+hist_den_1 <- datos %>% 
+  ggplot(aes(x = Payment))+
+  geom_density(color = "royalblue3", lwd = 0.8)+
+  labs(x = "Pagos", y = "Densidad")+
+  theme(plot.title = element_text(hjust = 0.5)) +
+  geom_histogram(aes(y = ..density..), alpha = 0.4, color = "steelblue1", fill = "steelblue1", bins = 35) +
+  theme(panel.background = element_rect(fill = "gray98"))
+```
+
+```{r}
+boxplot_1 <- datos %>% 
+  ggplot(aes(x = "", y = Payment))+
+  ggtitle("Boxplot de Payment")+
+  geom_boxplot() +
+  theme(plot.title = element_text(hjust = 0.5))+
+  geom_text(aes(x=1.25, y=84.64396+2.5, label="Media=84.64396"), size=4,fontface = "italic", family = "serif") +
+  theme(panel.background = element_rect(fill = "gray95"))+
+  geom_errorbar(aes(ymin = (78.89755-(1.5*12.19841)), ymax = (91.09596+1.5*12.19841)), width = 0.2)+
+  geom_text(aes(x=1.28, y=(78.89755-(1.5*12.19841)), label="Q[0.25]-(1.5)*RIC==60.59993"), 
+            parse = T, size=4,fontface = "italic", family = "serif")+
+  geom_text(aes(x=1.28, y=(91.09596+1.5*12.19841), label="Q[0.75]+(1.5)*RIC==109.3936"), 
+            parse = T, size=4,fontface = "italic", family = "serif")+
+  geom_text(aes(x=1.25, y=78.89755-3, label="Q[0.25]==78.89755"), 
+            parse = T, size=4,fontface = "italic", family = "serif")+
+  geom_text(aes(x=1.25, y=91.09596+3, label="Q[0.75]==91.09596"), 
+            parse = T, size=4,fontface = "italic", family = "serif")
+```
+
+```{r}
+empiric_1 <- datos %>% ggplot(aes(Payment)) + 
+  stat_ecdf(geom = "point")+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme(panel.background = element_rect(fill = "gray98"))+
+  labs(y = "Probabilidad")+
+  aes(col = ..y..)+
+  guides(col = FALSE)
+```
+
+Primero, veremos un histograma, densidad y distribución empirica de los pagos
+
+```{r}
+grid.arrange(hist_den_1,empiric_1, ncol=2, top = "Histograma, densidad y distribución empírica de Payment")
+```
+
+```{r}
+# library(plotly)
+# subplot(hist_den_1,boxplot_1,empiric_1, margin =  0.05, titleX = TRUE) %>% layout(title = "Variables continuas")
+```
+
+Ahora, un boxplot
+
+```{r}
+boxplot_1
+```
+
+Ahora, nos interesa buscar de forma **empírica** qué variable aleatoria está detrás de los pagos de los clientes y así proponer una distribución.
+
+Antes que nada, veamos algunas características que debe tener la variable aleatoria que propongamos:
+
++ Valores continuos mayores a cero, ya que son precios y ningún precio en esta base de datos es negativo.
++ Se tienen las siguientes estadísticas (aunque algunas ya se pudieron apreciar en las gráficas anteriores):
+
+1. **_Media_** = 84.64396
+2. **_Mediana_** = `r median(datos$Payment)`
+3. **_Moda_** = `r as.numeric(as.character((Profiling(division_datos$num, type = "numerical"))[3,4]))`
+4. **_Varianza_** = `r (Profiling(division_datos$num, type = "numerical"))[3,8]^2`
+5. **_Desviación estandar_** = `r (Profiling(division_datos$num, type = "numerical"))[3,8]`
+6. **_Rango intercuantil_** = [`r as.numeric(quantile(datos$Payment, probs = c(0.25, 0.75))[1])`, `r as.numeric(quantile(datos$Payment, probs = c(0.25, 0.75))[2])`]
+7. **_Coeficiente de variación_** = `r percent((Profiling(division_datos$num, type = "numerical"))[3,8]/mean(datos$Payment))`
+8. **_Coeficiente de asimetría (Skewness)_** = `r skewness(datos$Payment)`
+9. **_Curtosis_** = `r kurtosis(datos$Payment)`
+
+Con los datos y las gráficas anteriores podemos resumir lo siguiente:
+
++ Al ser los valores mayores a cero y continuos, descartamos cualquier variable discreta (como _poisson_, etc) y cualquiera que tenga un rango con valores negativos (como la _normal_ y la _t de Student_), además de que se tienen valores mayores a uno por lo que se descartan otras distribuciones como la _beta_
++ La densidad no tiene colas pesadas, en todo caso, la cola donde tiene la mayor cantidad de outliers es la cola izquierda (notable de ver en cualquiera de los tres gráficos anteriores); por lo que descartamos distribuciones con colas muy pesadas (como la _log-Normal_, _Pareto_ y _Burr_)
++ Al tener una curtosis positiva, inidica la presencia, como se puede ver en la gráfica de la densidad, de un pico y al tener un coeficiente de variación del `r percent((Profiling(division_datos$num, type = "numerical"))[3,8]/mean(datos$Payment))`; los valores no varían demasiado de la media, lo cual, generalmente no cumple la distribución _exponencial_, por lo que proponemos una función gamma o weibull para ajustar estos datos.
+
+Para la distribución gamma, se utilizaron los estimadores por momentos y para la función weibull, los estimadores máximo verosimil. Ambos con la función `fitdistrplus::fitdist()`
+
+```{r}
+ajuste_1_1 <- fitdist(datos$Payment, "gamma", method = "mme")
+ajuste_1_2 <- fitdist(datos$Payment, "weibull", method = "mle")
+```
+
++ Gamma: forma = `r ajuste_1_1$estimate[1]`; rate = `r ajuste_1_1$estimate[2]`.
++ Weibull: forma = `r ajuste_1_2$estimate[1]`; escala =  `r ajuste_1_2$estimate[2]`.
+
+```{r}
+ad_gamma <- ad.test(datos$Payment,pgamma,shape=ajuste_1_1 $estimate[[1]],rate=ajuste_1_1$estimate[[2]])
+ks_gamma <- ks.test(datos$Payment,pgamma,shape=ajuste_1_1 $estimate[[1]],rate=ajuste_1_1$estimate[[2]])
+ad_weibull <- ad.test(datos$Payment,pweibull,shape=ajuste_1_2 $estimate[[1]],scale=ajuste_1_2$estimate[[2]])
+ks_weibull <- ks.test(datos$Payment,pweibull,shape=ajuste_1_2 $estimate[[1]],scale=ajuste_1_2$estimate[[2]])
+```
+
+A manera de resumen, se tiene lo siguiente:
+
+| Distribución |        Prueba       | Estadístico | P-Value |
+|:------------:|:-------------------:|-------------|---------|
+|     Gamma    |   Anderson-Darling  | `r ad_gamma$statistic` | `r ad_gamma$p.value`|
+|     Gamma    | Kolmogorov-Smirnoff | `r ks_gamma$statistic` | `r ks_gamma$p.value`|
+|    Weibull   |   Anderson-Darling  | `r ad_weibull$statistic`| `r ad_weibull$p.value` |
+|    Weibull   | Kolmogorov-Smirnoff | `r ks_weibull$statistic` | `r ks_weibull$p.value` |
+
+Por lo que elegimos la distribución Weibull como la distribución que mejor se ajusta a los datos; ya que, con esta distribución, no existe evidencia estadística suficiente para reachazar la hipótesis nula, es decir, no se recahza que no siguen una distribución weibull. Siendo más específicos sobre la distribución, se propone el siguiente modelo:
+
+$$
+Weibull(x;\alpha=10.28148, \beta=88.75676)=\frac{\alpha}{\beta}(\frac{1}{\beta}x)^{(\alpha-1)}e^{-(\frac{1}{\beta}x)^\alpha}=\frac{10.28148}{88.75676}(\frac{1}{88.75676}x)^{(10.28148-1)}e^{-(\frac{1}{88.75676}x)^{10.28148}}
+$$
+Finalmente, como algo extra; fijando una semilla ,`set.seed(9)`, y realizando simulaciones sobre la weibull propuesta, se tiene la siguiente comparación de densidades
+
+```{r}
+set.seed(9)
+datos %>% 
+  ggplot(aes(x = Payment))+
+  geom_density(color = "royalblue3", lwd = 0.8)+
+  labs(x = "Pagos", y = "Densidad")+
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(panel.background = element_rect(fill = "gray98"))+
+  geom_density(aes(rweibull(996,shape=ajuste_1_2 $estimate[[1]],scale=ajuste_1_2$estimate[[2]])),color = "red")
+```
