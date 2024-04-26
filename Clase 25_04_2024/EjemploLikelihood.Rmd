@@ -1,0 +1,91 @@
+---
+title: "Untitled"
+output: html_document
+date: "2024-04-26"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyselect)
+library(survival)
+library(survminer)
+```
+
+```{r}
+library(plotly)
+employees <- read_csv("Uncleaned_employees_final_dataset (1).csv")
+employees %>% ggplot(aes(x = avg_training_score)) + geom_boxplot()
+employees <- employees %>% mutate(good_employee = map_dbl(avg_training_score, 
+                                                           ~ if_else(.x > 60, 1, 0)))
+employees$length_of_service %>% summary()
+#employees %>% ggplot(aes(x = length_of_service)) + geom_density()
+employees %>% ggplot(aes(x = length_of_service)) + geom_boxplot()
+```
+
+```{r}
+employees$length_of_service %>% quantile(.93)
+```
+
+```{r}
+employees %>% filter(length_of_service<= 13) %>% ggplot(aes(x = length_of_service)) + geom_boxplot()
+```
+
+```{r}
+employees <- employees %>% filter(length_of_service<= 13)
+employees %>% ggplot(aes(x = length_of_service)) + geom_density()
+```
+
+```{r}
+employees %>% mutate(length_of_service = log(length_of_service)) %>% ggplot(aes(x = length_of_service)) + geom_density()
+```
+
+Exponencial
+Gamma
+Weibull
+
+```{r}
+library("MASS")
+library("fitdistrplus")
+descdist(employees$length_of_service)
+```
+
+```{r}
+fit_Weibull<-fitdist(employees$length_of_service, "weibull")
+fit_gamma<-fitdist(employees$length_of_service, "gamma")
+
+fit_gamma
+fit_Weibull
+```
+
+```{r}
+set.seed(8)
+employees %>% ggplot(aes(x = length_of_service, color = "datos")) + geom_density() + 
+  geom_density(aes(x, color = "gamma"), 
+               data = tibble(x = rgamma(50, shape = 2.7162725, rate = 0.5396119))) + 
+  geom_density(aes(x, color = "weibull"), 
+               data = tibble(x = rweibull(50, shape = 1.824116, scale = 5.675936)))
+```
+
+```{r}
+(employees_cens <-  tibble(left = employees$length_of_service) %>% 
+  mutate(right = if_else(employees$good_employee == 0, left, NA_real_)))
+```
+
+```{r}
+fit_blog <- fitdistcens(as.data.frame(employees_cens), "gamma")
+fit_blog$estimate
+```
+
+rgamma(50, shape = 2.7162725, rate = 0.5396119)
+
+```{r}
+employees %>% ggplot(aes(x = length_of_service, color = "datos")) + geom_density() + 
+  geom_density(aes(x, color = "censurada"), 
+               data = tibble(x = rgamma(50, shape = 2.4307099, rate = 0.3230664 ))) +
+  geom_density(aes(x, color = "no censurada"), 
+               data = tibble(x = rgamma(50, shape = 2.7162725, rate = 0.5396119)))
+```
+
